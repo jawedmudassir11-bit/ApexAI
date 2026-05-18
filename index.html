@@ -261,4 +261,413 @@
     </div>
 
     <div class="signature-badge">
-      <p>Made by <strong>Mudassir Jawed
+      <p>Made by <strong>Mudassir Jawed</strong></p>
+    </div>
+  </aside>
+
+  <aside id="snippetPanel">
+    <div class="preview-header" style="background:transparent; border:none; padding:0;">
+      <h2 style="margin:0; font-size:18px;">Saved Snippets</h2>
+      <button id="closeSnippetsBtn" class="btn-secondary" style="border:none; padding:4px;">✕</button>
+    </div>
+    <button id="saveNewSnippetBtn" class="btn-secondary">+ Save Current Input</button>
+    <div class="snippet-list" id="snippetList"></div>
+  </aside>
+
+  <main id="main">
+    <button id="openSnippetsBtn">‹ Snippets</button>
+
+    <section id="chatbox">
+      </section>
+
+    <div id="inputArea">
+      <div class="input-wrap">
+        <button id="micBtn" class="action-icon-btn" title="Voice Input">🎤</button>
+        <textarea id="userInput" placeholder="Type, /fetch URL, or drop a file..." rows="1" disabled></textarea>
+        <button id="sendBtn" type="button" disabled>➤</button>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+  <script type="module">
+    import * as webllm from "https://esm.run/@mlc-ai/web-llm";
+    import { get, set, del } from "https://cdn.jsdelivr.net/npm/idb-keyval@6/+esm";
+
+    const manifest = {
+      name: "ApexAI Workspace", short_name: "ApexAI", display: "standalone",
+      background_color: "#0a0b0d", theme_color: "#0a0b0d",
+      icons: [{ src: "logo.png", sizes: "512x512", type: "image/png" }]
+    };
+    const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+    document.head.insertAdjacentHTML('beforeend', `<link rel="manifest" href="${URL.createObjectURL(manifestBlob)}">`);
+
+    // FAST 1B MODEL FOR STABILITY
+    const modelId = "Llama-3.2-1B-Instruct-q4f16_1-MLC";
+    let engine = null; let ready = false; let generating = false; let stopRequested = false;
+
+    const welcomeHTML = `
+      <div class="welcome" id="welcome">
+        <img src="logo.png" class="welcome-logo" alt="ApexAI Logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjN2M0ZGZmIi8+PHRleHQgeD0iMjAiIHk9IjI2IiBmaWxsPSIjZmZmIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+QTwvdGV4dD48L3N2Zz4='">
+        <h2>Intelligent Workspace</h2>
+        <p class="muted">Run analysis, write code, and process files live.</p>
+        <div class="prompts">
+          <button class="prompt">Create a simple HTML button</button>
+          <button class="prompt">Write a Python script for file sorting</button>
+          <button class="prompt">/fetch https://en.wikipedia.org/wiki/Artificial_intelligence</button>
+        </div>
+      </div>`;
+
+    // FORCED OVERRIDE RULES TO PREVENT GENERIC OVERVIEWS
+    const baseRule = "You MUST provide complete, detailed, and comprehensive answers. Never give just a 'general overview' or refuse a valid request. Write out full code, full math steps, and full explanations. If asked who made you, created you, your founder, or developer, answer explicitly: 'Mudassir Jawed'. Do not mention other entities.";
+    const personas = {
+      default: "You are ApexAI, a professional analytical intelligence agent. Provide precise, full-length solutions. " + baseRule,
+      coder: "You are ApexAI, an expert software engineer. Focus entirely on clean, robust code. Write complete scripts, not just snippets. " + baseRule,
+      creative: "You are ApexAI, a creative brainstorming assistant. Be expansive and detailed. " + baseRule
+    };
+
+    const chatbox = document.getElementById("chatbox");
+    const input = document.getElementById("userInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const micBtn = document.getElementById("micBtn");
+    const themeSelect = document.getElementById("themeSelect");
+    const personaSelect = document.getElementById("personaSelect");
+    const customPersonaInput = document.getElementById("customPersonaInput");
+
+    // ---- Themes ----
+    const savedTheme = localStorage.getItem('apexai-theme') || 'dark';
+    themeSelect.value = savedTheme;
+    if(savedTheme !== 'dark') document.body.className = `theme-${savedTheme}`;
+
+    themeSelect.addEventListener('change', (e) => {
+      document.body.className = e.target.value === 'dark' ? '' : `theme-${e.target.value}`;
+      localStorage.setItem('apexai-theme', e.target.value);
+    });
+
+    // ---- Voice Dictation ----
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null; let isListening = false;
+    if (SpeechRecognition) {
+      recognition = new SpeechRecognition(); recognition.continuous = false; recognition.interimResults = false;
+      recognition.onstart = () => { isListening = true; micBtn.classList.add("listening"); };
+      recognition.onresult = (e) => { input.value += (input.value ? " " : "") + e.results[0][0].transcript; input.dispatchEvent(new Event('input')); };
+      recognition.onerror = () => stopListening(); recognition.onend = () => stopListening();
+    } else { micBtn.style.display = 'none'; }
+    micBtn.addEventListener('click', () => { if(!recognition) return; isListening ? recognition.stop() : recognition.start(); });
+    function stopListening() { isListening = false; micBtn.classList.remove("listening"); }
+
+    // ---- IndexedDB Memory Management ----
+    let sessions = {}; let currentId = null;
+
+    async function initDatabase() {
+      sessions = await get('apexai-sessions') || {};
+      currentId = localStorage.getItem('apexai-current-id');
+      if (!currentId || !sessions[currentId]) await createNewSession();
+      renderSessionList(); loadSessionToUI();
+    }
+
+    async function createNewSession() {
+      currentId = Date.now().toString();
+      sessions[currentId] = { title: "New Chat", messages: [], persona: 'default', customPrompt: '' };
+      await saveSessions(); loadSessionToUI();
+    }
+
+    async function saveSessions() {
+      await set('apexai-sessions', sessions);
+      localStorage.setItem('apexai-current-id', currentId);
+      renderSessionList();
+    }
+
+    function switchSession(id) {
+      if (generating) return; currentId = id; localStorage.setItem('apexai-current-id', currentId);
+      loadSessionToUI(); renderSessionList(); closeMobileMenu();
+    }
+
+    function renderSessionList() {
+      const list = document.getElementById('sessionList'); list.innerHTML = '';
+      Object.entries(sessions).reverse().forEach(([id, session]) => {
+        const div = document.createElement('div'); div.className = `session-item ${id === currentId ? 'active' : ''}`;
+        div.innerText = session.title; div.onclick = () => switchSession(id); list.appendChild(div);
+      });
+    }
+
+    function loadSessionToUI() {
+      chatbox.innerHTML = '';
+      personaSelect.value = sessions[currentId].persona || 'default';
+      customPersonaInput.value = sessions[currentId].customPrompt || '';
+      customPersonaInput.style.display = personaSelect.value === 'custom' ? 'block' : 'none';
+
+      if (sessions[currentId].messages.length === 0) {
+        chatbox.innerHTML = welcomeHTML; 
+        document.querySelectorAll(".prompt").forEach((b) => { b.onclick = () => { input.value = b.textContent.trim(); input.dispatchEvent(new Event('input')); input.focus(); }; });
+      } else {
+        sessions[currentId].messages.forEach((msg, index) => {
+          addMsgToDOM(msg.content, msg.role === 'user' ? 'user' : 'bot', index);
+          if (msg.stats && msg.role === 'bot') {
+            const statDiv = document.createElement('div'); statDiv.className = 'generation-stats'; statDiv.innerText = msg.stats; chatbox.lastChild.appendChild(statDiv);
+          }
+        });
+      }
+      scrollBottom();
+    }
+
+    // ---- Web Fetching (Agentic Logic) ----
+    async function fetchWebpage(url) {
+      try {
+        const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
+        const data = await res.json(); const parser = new DOMParser();
+        const doc = parser.parseFromString(data.contents, 'text/html');
+        return doc.body.textContent.replace(/\s+/g, ' ').substring(0, 6000); 
+      } catch(e) { return "Error fetching webpage."; }
+    }
+
+    // ---- Snippet Library ----
+    let snippets = JSON.parse(localStorage.getItem('apexai-snippets')) || [];
+    const snippetPanel = document.getElementById('snippetPanel');
+    document.getElementById('openSnippetsBtn').onclick = () => snippetPanel.classList.add('open');
+    document.getElementById('closeSnippetsBtn').onclick = () => snippetPanel.classList.remove('open');
+    document.getElementById('saveNewSnippetBtn').onclick = () => {
+      if(!input.value.trim()) return alert("Type code first!");
+      const title = prompt("Name this snippet:");
+      if(title) { snippets.push({ title, code: input.value.trim() }); localStorage.setItem('apexai-snippets', JSON.stringify(snippets)); renderSnippets(); input.value = ""; }
+    };
+    function renderSnippets() {
+      const list = document.getElementById('snippetList'); list.innerHTML = '';
+      snippets.forEach((snip, index) => {
+        const card = document.createElement('div'); card.className = 'snippet-card';
+        card.innerHTML = `<div class="snippet-header"><span class="snippet-title">${snip.title}</span><button class="snippet-del" data-idx="${index}">✕</button></div><div class="snippet-code">${snip.code}</div>`;
+        card.onclick = (e) => {
+          if(e.target.classList.contains('snippet-del')) { snippets.splice(e.target.dataset.idx, 1); localStorage.setItem('apexai-snippets', JSON.stringify(snippets)); renderSnippets(); }
+          else { input.value = snip.code; input.dispatchEvent(new Event('input')); input.focus(); if(window.innerWidth <= 768) snippetPanel.classList.remove('open'); }
+        };
+        list.appendChild(card);
+      });
+    }
+    renderSnippets();
+
+    // ---- Renderer ----
+    const renderer = new marked.Renderer(); const originalCode = renderer.code.bind(renderer);
+    function escapeHtml(str) { return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
+    renderer.code = function(code, language, isEscaped) {
+      const highlighted = originalCode(code, language, isEscaped);
+      const isHtml = language === 'html' || language === 'xml';
+      
+      let actions = `<div class="code-actions">`;
+      if(isHtml) { actions += `<button class="code-btn preview-btn" data-raw="${escapeHtml(code)}">Preview</button>`; }
+      actions += `<button class="code-btn copy-btn">Copy</button></div>`;
+      
+      return `<div class="code-wrapper">${actions}${highlighted}</div>`;
+    };
+    marked.setOptions({ renderer: renderer, breaks: true, highlight: function(code, lang) { return hljs.highlight(code, { language: hljs.getLanguage(lang) ? lang : 'plaintext' }).value; } });
+
+    document.addEventListener('click', (e) => {
+      if (e.target.classList.contains('copy-btn')) { navigator.clipboard.writeText(e.target.closest('.code-wrapper').querySelector('code').innerText); e.target.innerText = "Copied!"; setTimeout(() => e.target.innerText = "Copy", 2000); }
+      if (e.target.classList.contains('preview-btn')) { const txt = document.createElement("textarea"); txt.innerHTML = e.target.getAttribute('data-raw'); document.getElementById('previewFrame').srcdoc = txt.value; document.getElementById('previewModal').classList.add('open'); }
+    });
+    document.getElementById('closePreview').onclick = () => document.getElementById('previewModal').classList.remove('open');
+
+    // ---- Advanced Exports, Edits & Branching ----
+    document.getElementById("exportBtn").addEventListener("click", () => {
+      if (sessions[currentId].messages.length === 0) return;
+      const format = prompt("Export as: md, html, or py?", "md")?.toLowerCase();
+      if (!['md', 'html', 'py'].includes(format)) return;
+
+      let output = ""; let mime = "text/plain";
+      if (format === 'md') {
+        output = `# ${sessions[currentId].title}\n\n`;
+        sessions[currentId].messages.forEach(m => output += `### ${m.role === 'user' ? 'User' : 'ApexAI'}\n${m.content}\n\n---\n\n`);
+        mime = "text/markdown";
+      } else if (format === 'html') {
+        output = `<html><body style="font-family:sans-serif; max-width:800px; margin:auto; padding:20px;"><h1>${sessions[currentId].title}</h1>`;
+        sessions[currentId].messages.forEach(m => output += `<div style="background:${m.role==='user'?'#f0f0f0':'#e0f7fa'}; padding:15px; margin-bottom:10px; border-radius:8px;"><strong>${m.role==='user'?'User':'ApexAI'}:</strong><br>${marked.parse(m.content)}</div>`);
+        output += `</body></html>`;
+        mime = "text/html";
+      } else if (format === 'py') {
+        output = `# Extracted from ${sessions[currentId].title}\n\n`;
+        sessions[currentId].messages.forEach(m => {
+          const blocks = m.content.match(/```python[\s\S]*?```/g);
+          if(blocks) blocks.forEach(b => output += b.replace(/```python\n|```/g, '') + "\n\n");
+        });
+        if(!output.trim()) return alert("No Python code found to export.");
+      }
+
+      const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([output], { type: mime })); a.download = `ApexAI_${sessions[currentId].title.replace(/[^a-z0-9]/gi, '_')}.${format}`; a.click();
+    });
+
+    window.editMessage = async function(index) {
+      if (generating) return; input.value = sessions[currentId].messages[index].content; input.dispatchEvent(new Event('input')); input.focus();
+      sessions[currentId].messages = sessions[currentId].messages.slice(0, index); await saveSessions(); loadSessionToUI();
+    };
+
+    window.branchSession = async function(index) {
+      if (generating) return;
+      const newId = Date.now().toString();
+      sessions[newId] = { title: sessions[currentId].title + " (Branch)", messages: sessions[currentId].messages.slice(0, index + 1), persona: sessions[currentId].persona, customPrompt: sessions[currentId].customPrompt };
+      await saveSessions(); switchSession(newId);
+    };
+
+    // ---- Controls ----
+    personaSelect.addEventListener('change', async (e) => { 
+      sessions[currentId].persona = e.target.value; 
+      customPersonaInput.style.display = e.target.value === 'custom' ? 'block' : 'none';
+      await saveSessions(); 
+    });
+    customPersonaInput.addEventListener('input', async (e) => { sessions[currentId].customPrompt = e.target.value; await saveSessions(); });
+
+    document.getElementById("newChatBtn").addEventListener("click", async () => { if(!generating) { await createNewSession(); closeMobileMenu(); } });
+    document.getElementById("clearBtn").addEventListener("click", async () => {
+      if(generating) return; delete sessions[currentId]; const keys = Object.keys(sessions);
+      currentId = keys.length > 0 ? keys[keys.length - 1] : null; if (!currentId) await createNewSession(); else await saveSessions(); loadSessionToUI(); closeMobileMenu();
+    });
+
+    function closeMobileMenu() { document.getElementById("sidebar").classList.remove("open"); document.getElementById("mobileOverlay").classList.remove("open"); }
+    document.getElementById("menuToggle").addEventListener("click", () => { document.getElementById("sidebar").classList.toggle("open"); document.getElementById("mobileOverlay").classList.toggle("open"); });
+    document.getElementById("mobileOverlay").addEventListener("click", closeMobileMenu);
+
+    input.addEventListener('keydown', function(e) {
+      if (e.key == 'Tab') {
+        e.preventDefault();
+        const start = this.selectionStart; const end = this.selectionEnd;
+        this.value = this.value.substring(0, start) + "  " + this.value.substring(end);
+        this.selectionStart = this.selectionEnd = start + 2;
+      }
+      if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSendAction(); }
+    });
+
+    input.addEventListener("input", () => { input.style.height = "26px"; input.style.height = (input.scrollHeight) + "px"; sendBtn.disabled = input.value.trim() === "" || (!ready || generating); });
+    sendBtn.addEventListener("click", handleSendAction);
+
+    // Document Drop
+    document.body.addEventListener('dragover', (e) => { e.preventDefault(); if(!generating) document.body.classList.add('drag-active'); });
+    document.body.addEventListener('dragleave', (e) => { if (e.relatedTarget === null) document.body.classList.remove('drag-active'); });
+    document.body.addEventListener('drop', (e) => {
+      e.preventDefault(); document.body.classList.remove('drag-active');
+      if(generating || !ready || !e.dataTransfer.files[0]) return;
+      const reader = new FileReader(); 
+      reader.onload = (ev) => { 
+        const docText = ev.target.result.substring(0, 5000); 
+        input.value += (input.value ? "\n\n" : "") + `[Document Contents:\n${docText}\n]`; 
+        input.dispatchEvent(new Event('input')); 
+      };
+      reader.readAsText(e.dataTransfer.files[0]);
+    });
+
+    // ---- Execution ----
+    async function init() {
+      await initDatabase();
+      if (!("gpu" in navigator)) { setStatus("HARDWARE ERROR", 0); return addMsgToDOM("WebGPU is missing. Access via Chrome or Edge.", "bot error", -1); }
+      try {
+        setStatus("LOADING 0%", 0);
+        engine = await webllm.CreateMLCEngine(modelId, { initProgressCallback: (p) => { setStatus(`LOADING ${Math.round((p.progress||0)*100)}%`, Math.round((p.progress||0)*100)); } });
+        ready = true; setStatus("ONLINE", 100); input.disabled = false; input.focus();
+      } catch (error) { setStatus("OFFLINE", 0); addMsgToDOM("Engine failed to initialize. Ensure WebGPU is active.", "bot error", -1); }
+    }
+
+    function handleSendAction() { if (generating && engine && engine.interruptGenerate) { stopRequested = true; engine.interruptGenerate(); } else { sendMessage(); } }
+    function setStatus(label, percent) { document.getElementById("status").textContent = label; document.getElementById("progressBar").style.width = `${percent}%`; }
+    function scrollBottom() { chatbox.scrollTop = chatbox.scrollHeight; }
+
+    function addMsgToDOM(text, cls, index) {
+      const welcomeEl = document.getElementById("welcome"); if (welcomeEl) welcomeEl.remove();
+      const container = document.createElement("div"); container.className = `msg-container ${cls}`;
+      const msgDiv = document.createElement("div"); msgDiv.className = "msg";
+      
+      if(cls === "user") {
+        msgDiv.textContent = text; container.appendChild(msgDiv);
+        if(index !== undefined && index !== -1) {
+          const actionsDiv = document.createElement("div"); actionsDiv.className = "msg-actions";
+          const editBtn = document.createElement("button"); editBtn.className = "edit-btn"; editBtn.innerText = "✎ Edit"; editBtn.onclick = () => window.editMessage(index);
+          actionsDiv.appendChild(editBtn); container.appendChild(actionsDiv);
+        }
+      } else { 
+        msgDiv.innerHTML = marked.parse(text); container.appendChild(msgDiv); 
+        if(index !== undefined && index !== -1) {
+          const actionsDiv = document.createElement("div"); actionsDiv.className = "msg-actions";
+          const branchBtn = document.createElement("button"); branchBtn.className = "edit-btn"; branchBtn.innerText = "⑂ Branch Chat"; branchBtn.onclick = () => window.branchSession(index);
+          actionsDiv.appendChild(branchBtn); container.appendChild(actionsDiv);
+        }
+      }
+      chatbox.appendChild(container); scrollBottom(); return msgDiv;
+    }
+
+    async function sendMessage() {
+      let text = input.value.trim(); if (!text || !ready) return;
+      generating = true; stopRequested = false;
+      input.value = ""; input.style.height = "26px"; input.disabled = true; 
+      sendBtn.innerHTML = "■"; sendBtn.classList.add("stop-mode");
+
+      if (sessions[currentId].messages.length === 0) {
+        sessions[currentId].title = text.length > 25 ? text.substring(0, 25) + "..." : text; renderSessionList();
+      }
+
+      const userIndex = sessions[currentId].messages.length;
+      addMsgToDOM(text, "user", userIndex); 
+
+      let aiPrompt = text;
+      if (text.startsWith("/fetch ")) {
+        const url = text.split(" ")[1];
+        if(url) {
+            const botDiv = addMsgToDOM("Fetching website data...", "bot", -1);
+            const siteContent = await fetchWebpage(url);
+            aiPrompt = `Read this website content:\n\n${siteContent}\n\nUser asked: Summarize or act on the above URL.`;
+            botDiv.remove();
+        }
+      }
+
+      sessions[currentId].messages.push({ role: "user", content: text, aiPrompt: aiPrompt }); await saveSessions();
+
+      const botDiv = addMsgToDOM("Computing sequence...", "bot", -1);
+      
+      let systemPrompt = personas[sessions[currentId].persona] || personas.default;
+      if(sessions[currentId].persona === 'custom' && sessions[currentId].customPrompt) {
+        systemPrompt = sessions[currentId].customPrompt + " " + CREATOR_RULE;
+      }
+      
+      const chatMessages = [{ role: "system", content: systemPrompt }];
+      sessions[currentId].messages.slice(-10).forEach(m => chatMessages.push({role: m.role, content: m.aiPrompt || m.content}));
+      
+      const startTime = performance.now();
+
+      try {
+        let reply = "";
+        const chunks = await engine.chat.completions.create({ 
+          messages: chatMessages, 
+          stream: true, 
+          temperature: sessions[currentId].persona === 'creative' ? 0.7 : 0.3,
+          max_tokens: 2048 // FORCE THE 1B MODEL TO GIVE LONG ANSWERS
+        });
+        for await (const chunk of chunks) {
+          if (stopRequested) break;
+          reply += chunk.choices[0]?.delta?.content || "";
+          botDiv.innerHTML = marked.parse(reply) || "Processing..."; scrollBottom();
+        }
+
+        const endTime = performance.now();
+        const finalReply = reply.trim() || (stopRequested ? "Process interrupted." : "No output.");
+        botDiv.innerHTML = marked.parse(finalReply);
+
+        const timeSec = ((endTime - startTime) / 1000).toFixed(1);
+        const estimatedTokens = Math.round(finalReply.split(/\s+/).length * 1.3);
+        const statsStr = `${timeSec}s · ~${(estimatedTokens / timeSec).toFixed(1)} tokens/s`;
+
+        const statDiv = document.createElement('div'); statDiv.className = 'generation-stats'; statDiv.innerText = statsStr;
+        botDiv.parentElement.appendChild(statDiv);
+        
+        const actionsDiv = document.createElement("div"); actionsDiv.className = "msg-actions";
+        const branchBtn = document.createElement("button"); branchBtn.className = "edit-btn"; branchBtn.innerText = "⑂ Branch Chat"; branchBtn.onclick = () => window.branchSession(sessions[currentId].messages.length);
+        actionsDiv.appendChild(branchBtn); botDiv.parentElement.appendChild(actionsDiv);
+
+        sessions[currentId].messages.push({ role: "assistant", content: finalReply, stats: statsStr }); await saveSessions();
+      } catch (error) { 
+        console.error(error); botDiv.classList.add("error"); botDiv.textContent = "Error: " + (error.message || "Execution interrupted."); 
+      } finally { 
+        generating = false; input.disabled = false; sendBtn.innerHTML = "➤"; sendBtn.classList.remove("stop-mode"); input.focus(); scrollBottom(); 
+      }
+    }
+    
+    init();
+  </script>
+</body>
+</html>
