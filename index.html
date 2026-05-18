@@ -305,14 +305,15 @@
     const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
     document.head.insertAdjacentHTML('beforeend', `<link rel="manifest" href="${URL.createObjectURL(manifestBlob)}">`);
 
-    const modelId = "Phi-3.5-mini-instruct-q4f16_1-MLC";
+    // REVERTED TO THE FAST 1B MODEL
+    const modelId = "Llama-3.2-1B-Instruct-q4f16_1-MLC";
     let engine = null; let ready = false; let generating = false; let stopRequested = false;
 
     const welcomeHTML = `
       <div class="welcome" id="welcome">
         <img src="logo.png" class="welcome-logo" alt="ApexAI Logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjN2M0ZGZmIi8+PHRleHQgeD0iMjAiIHk9IjI2IiBmaWxsPSIjZmZmIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+QTwvdGV4dD48L3N2Zz4='">
         <h2>Intelligent Workspace</h2>
-        <p class="muted">Powered by Phi-3.5. Run analysis, write code, and process files live.</p>
+        <p class="muted">Run analysis, write code, and process files live.</p>
         <div class="prompts">
           <button class="prompt">Create a simple HTML button</button>
           <button class="prompt">Write a Python script for file sorting</button>
@@ -554,9 +555,6 @@
     // ---- Execution ----
     async function init() {
       await initDatabase();
-      if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        alert("Mobile Warning: The Phi-3.5 model requires ~4GB RAM. Phone browsers may kill the tab if memory runs out.");
-      }
       if (!("gpu" in navigator)) { setStatus("HARDWARE ERROR", 0); return addMsgToDOM("WebGPU is missing. Access via Chrome or Edge.", "bot error", -1); }
       try {
         setStatus("LOADING 0%", 0);
