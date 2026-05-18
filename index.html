@@ -1,40 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+Since you have the core foundation perfectly optimized for both desktop and mobile—including voice dictation, multiple sessions, and the custom snippet library—adding new features is all about enhancing what is already there without breaking the clean architecture.
 
-  <title>ApexAI | Intelligence Workspace</title>
-  <meta name="description" content="ApexAI is a high-performance local browser AI assistant for coding, math, and analysis." />
+To move forward safely, we need to pick **one specific area** to focus on. Here are three distinct feature paths we can explore next:
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
+### Path 1: Enhanced Code Tooling
 
-  <style>
-    :root {
-      --bg-main: #0a0b0d;
-      --bg-sidebar: #111317;
-      --bg-panel: #16191f;
-      --accent-glow: #7c4dff;
-      --accent-success: #00e676;
-      --accent-danger: #ff5252;
-      --accent-warning: #ffb020;
-      --border-color: rgba(255, 255, 255, 0.08);
-      --text-main: #f1f3f5;
-      --text-muted: #98a2b3;
-    }
+* **Syntax Highlighting in Input:** Turn the standard textarea into a real mini-code editor (like Monaco or CodeMirror) so code is colored *as you type it*, not just when the AI responds.
+* **Auto-Complete Suggestions:** When you type things like `def ` or `function`, a small popup suggests common completions.
 
-    * { box-sizing: border-box; }
+### Path 2: Advanced AI Memory & Logic
 
-    body {
-      margin: 0; height: 100dvh; overflow: hidden; display: flex;
-      color: var(--text-main);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: var(--bg-main); -webkit-font-smoothing: antialiased;
-    }
+* **System Prompt Builder:** Right now, you select from a dropdown (Coder, Analyst, Creative). We can add a "Custom" option that opens a text box, allowing you to write exactly how you want the AI to behave (e.g., "Respond only in JSON," or "Speak like a pirate").
+* **Session Branching:** If the AI gives you a decent answer but you want to try a different approach from that exact spot, we could add a "Branch" button to split the conversation into an alternate timeline.
 
-    input, textarea, select { font-size: 16px !important; }
+### Path 3: UI & Workflow Power-Ups
 
-    /* Overlays */
+* **Dark/Light/Neon Themes:** Add a settings gear icon that lets you change the entire color scheme of the app instantly.
+* **File Export Formats:** Right now, you can export a chat as a Markdown file. We could add a button to export specifically as `.html` or `.py` files if the AI just wrote a complete script.
+
+Which path sounds like the best direction for how you actually plan to use ApexAI?    /* Overlays */
     #dropOverlay { display: none; position: fixed; inset: 0; background: rgba(10, 11, 13, 0.95); z-index: 1000; place-items: center; color: var(--accent-glow); font-size: 24px; font-weight: 600; border: 4px dashed var(--accent-glow); pointer-events: none; }
     body.drag-active #dropOverlay { display: grid; }
     #mobileOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 90; opacity: 0; transition: opacity 0.3s; }
