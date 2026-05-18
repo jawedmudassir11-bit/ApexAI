@@ -17,6 +17,7 @@
       --accent-glow: #7c4dff;
       --accent-success: #00e676;
       --accent-danger: #ff5252;
+      --accent-warning: #ffb020;
       --border-color: rgba(255, 255, 255, 0.08);
       --text-main: #f1f3f5;
       --text-muted: #98a2b3;
@@ -35,6 +36,568 @@
 
     /* Overlays */
     #dropOverlay { display: none; position: fixed; inset: 0; background: rgba(10, 11, 13, 0.95); z-index: 1000; place-items: center; color: var(--accent-glow); font-size: 24px; font-weight: 600; border: 4px dashed var(--accent-glow); pointer-events: none; }
+    body.drag-active #dropOverlay { display: grid; }
+    #mobileOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 90; opacity: 0; transition: opacity 0.3s; }
+
+    /* Layout Elements */
+    #mobileHeader { display: none; background: var(--bg-sidebar); padding: max(12px, env(safe-area-inset-top)) 20px 12px; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-color); z-index: 50; }
+    #menuToggle { background: transparent; border: 1px solid var(--accent-glow); color: var(--accent-glow); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; }
+
+    #sidebar { width: 280px; min-width: 280px; padding: 24px 20px; background: var(--bg-sidebar); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 16px; z-index: 100; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    
+    /* New Snippet Panel */
+    #snippetPanel { position: fixed; right: -320px; top: 0; bottom: 0; width: 320px; background: var(--bg-sidebar); border-left: 1px solid var(--border-color); z-index: 200; padding: 24px 20px; display: flex; flex-direction: column; gap: 16px; transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: -10px 0 30px rgba(0,0,0,0.5); }
+    #snippetPanel.open { right: 0; }
+    .snippet-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+    .snippet-card { background: var(--bg-panel); border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; cursor: pointer; transition: border-color 0.2s; }
+    .snippet-card:hover { border-color: var(--accent-glow); }
+    .snippet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .snippet-title { font-weight: 600; font-size: 13px; color: var(--text-main); }
+    .snippet-del { color: var(--accent-danger); cursor: pointer; font-size: 12px; background: none; border: none; padding: 0; }
+    .snippet-code { font-family: monospace; font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* Live Preview Modal */
+    #previewModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 300; padding: 40px; }
+    #previewModal.open { display: flex; flex-direction: column; }
+    .preview-header { display: flex; justify-content: space-between; background: var(--bg-sidebar); padding: 12px 20px; border-radius: 12px 12px 0 0; border: 1px solid var(--border-color); border-bottom: none; }
+    #closePreview { background: var(--accent-danger); border: none; color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
+    #previewFrame { flex: 1; width: 100%; background: white; border: none; border-radius: 0 0 12px 12px; }
+
+    /* Branding & Common */
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .logo { width: 36px; height: 36px; border-radius: 8px; display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 18px; background: linear-gradient(135deg, var(--accent-glow), #448aff); box-shadow: 0 4px 14px rgba(124, 77, 255, 0.3); }
+    h1, h2, p { margin: 0; }
+    h1 { font-size: 18px; font-weight: 600; }
+    .muted { color: var(--text-muted); font-size: 13px; line-height: 1.5; }
+    
+    .panel { padding: 16px; border: 1px solid var(--border-color); border-radius: 10px; background: var(--bg-panel); }
+    .status-container { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    #status { color: var(--accent-success); font-size: 12px; font-weight: 600; text-transform: uppercase; }
+    .progress { height: 4px; overflow: hidden; border-radius: 2px; background: rgba(255, 255, 255, 0.05); }
+    #progressBar { width: 0%; height: 100%; background: var(--accent-glow); transition: width 0.3s; }
+
+    /* Controls */
+    .sidebar-controls { display: flex; flex-direction: column; gap: 10px; }
+    #personaSelect { width: 100%; padding: 12px 10px; background: var(--bg-panel); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; cursor: pointer; }
+    .btn-primary { background: var(--accent-glow); color: #fff; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; transition: opacity 0.2s; }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-secondary { background: transparent; color: var(--text-main); border: 1px solid var(--border-color); padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 500; font-size: 13px; transition: background 0.2s; }
+    .btn-secondary:hover { background: rgba(255,255,255,0.05); }
+
+    /* Sessions */
+    #sessionList { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; margin: 4px 0; }
+    #sessionList::-webkit-scrollbar { width: 4px; }
+    #sessionList::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 2px; }
+    .session-item { padding: 12px; border-radius: 6px; font-size: 14px; cursor: pointer; color: var(--text-muted); transition: background 0.2s, color 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .session-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
+    .session-item.active { background: rgba(124, 77, 255, 0.15); color: #fff; border: 1px solid rgba(124, 77, 255, 0.3); }
+
+    .action-row { display: flex; gap: 8px; }
+    .action-row button { flex: 1; }
+    #clearBtn { border-color: rgba(255, 82, 82, 0.3); color: var(--accent-danger); }
+    #clearBtn:hover { background: rgba(255, 82, 82, 0.1); }
+
+    .signature-badge { padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.05); text-align: center; padding-bottom: env(safe-area-inset-bottom); }
+    .signature-badge p { font-size: 11px; color: rgba(255, 255, 255, 0.3); }
+    .signature-badge strong { color: rgba(255, 255, 255, 0.5); }
+
+    /* Main Chat Space */
+    #main { flex: 1; min-width: 0; display: flex; flex-direction: column; background: var(--bg-main); height: 100%; position: relative; }
+    #openSnippetsBtn { position: absolute; top: 20px; right: 20px; z-index: 40; padding: 8px 12px; background: var(--bg-sidebar); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-main); cursor: pointer; font-size: 13px; }
+
+    #chatbox { flex: 1; width: min(100%, 840px); margin: 0 auto; padding: 32px 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; scroll-behavior: smooth; }
+    #chatbox::-webkit-scrollbar { width: 4px; }
+    #chatbox::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 2px; }
+
+    .welcome { margin: auto; max-width: 520px; text-align: center; display: grid; gap: 16px; }
+    .welcome h2 { font-size: clamp(24px, 6vw, 32px); font-weight: 700; letter-spacing: -0.5px; background: linear-gradient(135deg, #fff 40%, var(--text-muted)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .prompts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 12px; }
+    .prompt { padding: 14px; border: 1px solid var(--border-color); border-radius: 10px; color: var(--text-main); background: var(--bg-panel); cursor: pointer; text-align: left; font-size: 13px; transition: border-color 0.2s, background 0.2s; }
+
+    /* Messages */
+    .msg-container { display: flex; flex-direction: column; max-width: min(92%, 740px); width: fit-content; }
+    .msg-container.user { align-self: flex-end; }
+    .msg-container.bot { align-self: flex-start; width: 100%; }
+
+    .msg { padding: 4px 0; overflow-wrap: anywhere; line-height: 1.6; font-size: 15px; }
+    .user .msg { background: #1f222a; padding: 12px 18px; border-radius: 16px 16px 2px 16px; border: 1px solid var(--border-color); }
+    .error { color: #ff5252; border-color: rgba(255, 82, 82, 0.2); background: rgba(255, 82, 82, 0.05); padding: 12px 16px; border-radius: 8px; }
+
+    .edit-btn { align-self: flex-end; background: transparent; border: none; color: var(--text-muted); font-size: 12px; cursor: pointer; margin-top: 4px; }
+    .edit-btn:hover { color: #fff; }
+    .generation-stats { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 6px; font-family: monospace; }
+
+    /* Code Blocks */
+    .code-wrapper { position: relative; margin: 12px 0; }
+    .code-actions { position: absolute; top: 8px; right: 8px; display: flex; gap: 6px; z-index: 10; }
+    .code-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; }
+    .code-btn:hover { background: rgba(255,255,255,0.2); color: white; }
+    .preview-btn { background: rgba(124, 77, 255, 0.2); border-color: rgba(124, 77, 255, 0.4); color: white; }
+    
+    .msg pre { background: #0d0e11; padding: 16px; padding-top: 44px; border-radius: 8px; overflow-x: auto; border: 1px solid var(--border-color); margin: 0; }
+    .msg code { font-family: "SFMono-Regular", Consolas, monospace; background: rgba(255, 255, 255, 0.06); padding: 2px 6px; border-radius: 4px; font-size: 14px; }
+    .msg pre code { background: transparent; padding: 0; }
+
+    /* Input Area */
+    #inputArea { padding: 0 24px 32px; background: linear-gradient(transparent, var(--bg-main) 30%); }
+    .input-wrap { width: min(100%, 800px); margin: 0 auto; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 16px; display: flex; align-items: flex-end; gap: 12px; background: var(--bg-sidebar); }
+    .input-wrap:focus-within { border-color: rgba(124, 77, 255, 0.5); box-shadow: 0 0 0 1px rgba(124, 77, 255, 0.2); }
+
+    #userInput { flex: 1; min-width: 0; height: 26px; max-height: 150px; border: 0; outline: 0; color: var(--text-main); background: transparent; resize: none; font-family: inherit; line-height: 26px; }
+    #userInput::placeholder { color: rgba(255, 255, 255, 0.25); }
+
+    .action-icon-btn { width: 32px; height: 32px; border: none; border-radius: 8px; background: transparent; color: var(--text-muted); cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: color 0.2s, background 0.2s; }
+    .action-icon-btn:hover { color: white; background: rgba(255,255,255,0.05); }
+    .action-icon-btn.listening { color: var(--accent-danger); animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+    #sendBtn { width: 32px; height: 32px; min-width: 32px; border: 0; border-radius: 8px; color: #fff; font-size: 14px; cursor: pointer; background: var(--accent-glow); display: grid; place-items: center; margin-bottom: -2px; }
+    #sendBtn.stop-mode { background: var(--accent-danger); border-radius: 50%; }
+    #sendBtn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    @media (max-width: 768px) {
+      body { flex-direction: column; }
+      #mobileHeader { display: flex; }
+      #sidebar { position: fixed; left: 0; top: 0; bottom: 0; transform: translateX(-100%); box-shadow: 10px 0 30px rgba(0,0,0,0.5); }
+      #sidebar.open { transform: translateX(0); }
+      #mobileOverlay.open { display: block; opacity: 1; }
+      #snippetPanel { width: 100%; right: -100%; }
+      #previewModal { padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); }
+      #chatbox { padding: 20px 16px; }
+      .prompts { grid-template-columns: 1fr; }
+      #inputArea { padding: 10px 16px calc(16px + env(safe-area-inset-bottom)); }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="dropOverlay">Drop file to read contents</div>
+  <div id="mobileOverlay"></div>
+
+  <div id="previewModal">
+    <div class="preview-header">
+      <h3>Live HTML Preview</h3>
+      <button id="closePreview">Close</button>
+    </div>
+    <iframe id="previewFrame" sandbox="allow-scripts"></iframe>
+  </div>
+
+  <header id="mobileHeader">
+    <div class="brand">
+      <div class="logo" style="width: 28px; height: 28px; font-size: 14px;">A</div>
+      <h1 style="font-size: 16px;">ApexAI</h1>
+    </div>
+    <button id="menuToggle">Menu</button>
+  </header>
+
+  <aside id="sidebar">
+    <div class="brand">
+      <div class="logo">A</div>
+      <div>
+        <h1>ApexAI</h1>
+        <p class="muted" style="font-size: 12px;">Local Compute Kernel</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="status-container">
+        <div id="status">INITIALIZING</div>
+      </div>
+      <div class="progress">
+        <div id="progressBar"></div>
+      </div>
+    </div>
+
+    <div class="sidebar-controls">
+      <button id="newChatBtn" class="btn-primary">＋ New Session</button>
+      <select id="personaSelect">
+        <option value="default">🧠 Analyst (Default)</option>
+        <option value="coder">💻 Developer Mode</option>
+        <option value="creative">🎨 Creative Mode</option>
+      </select>
+    </div>
+
+    <div id="sessionList"></div>
+
+    <div class="action-row">
+      <button id="exportBtn" class="btn-secondary">Export Chat</button>
+      <button id="clearBtn" class="btn-secondary">Delete</button>
+    </div>
+
+    <div class="signature-badge">
+      <p>Made by <strong>Mudassir Jawed</strong></p>
+    </div>
+  </aside>
+
+  <aside id="snippetPanel">
+    <div class="preview-header" style="background:transparent; border:none; padding:0;">
+      <h2>Saved Snippets</h2>
+      <button id="closeSnippetsBtn" class="btn-secondary" style="border:none; padding:4px;">✕</button>
+    </div>
+    <button id="saveNewSnippetBtn" class="btn-secondary">+ Save Current Input</button>
+    <div class="snippet-list" id="snippetList">
+      </div>
+  </aside>
+
+  <main id="main">
+    <button id="openSnippetsBtn">‹ Snippets</button>
+
+    <section id="chatbox">
+      </section>
+
+    <div id="inputArea">
+      <div class="input-wrap">
+        <button id="micBtn" class="action-icon-btn" title="Voice Input">🎤</button>
+        <textarea id="userInput" placeholder="Type, drop a file, or speak..." rows="1" disabled></textarea>
+        <button id="sendBtn" type="button" disabled>➤</button>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+  <script type="module">
+    import * as webllm from "https://esm.run/@mlc-ai/web-llm";
+
+    // UPDATED TO A MUCH SMARTER, DESKTOP-CLASS MODEL
+    const modelId = "Phi-3.5-mini-instruct-q4f16_1-MLC";
+    let engine = null;
+    let ready = false;
+    let generating = false;
+    let stopRequested = false;
+
+    // Save welcome screen HTML
+    const welcomeHTML = `
+      <div class="welcome" id="welcome">
+        <h2>Intelligent Workspace</h2>
+        <p class="muted">Powered by Phi-3.5. Run analysis, write code, and preview it live.</p>
+        <div class="prompts">
+          <button class="prompt">Create a simple HTML button</button>
+          <button class="prompt">Explain this error message</button>
+          <button class="prompt">Write a Python script for file sorting</button>
+          <button class="prompt">Optimize this algorithm</button>
+        </div>
+      </div>`;
+
+    const CREATOR_RULE = "If the user asks who made you, who created you, who your founder is, or who developed you, you must answer explicitly and concisely: 'Mudassir Jawed'. Do not mention OpenAI, Google, Microsoft, WebLLM, or any other entities.";
+    const personas = {
+      default: "You are ApexAI, a highly advanced analytical intelligence agent. Provide precise, logically sound solutions. " + CREATOR_RULE,
+      coder: "You are ApexAI, an expert software engineer. Focus entirely on clean, robust, and optimized code. " + CREATOR_RULE,
+      creative: "You are ApexAI, a creative brainstorming assistant. Be expansive and conversational. " + CREATOR_RULE
+    };
+
+    const chatbox = document.getElementById("chatbox");
+    const input = document.getElementById("userInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const micBtn = document.getElementById("micBtn");
+
+    // ---- Voice Dictation Logic ----
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+    let isListening = false;
+
+    if (SpeechRecognition) {
+      recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      
+      recognition.onstart = () => { isListening = true; micBtn.classList.add("listening"); };
+      recognition.onresult = (e) => {
+        const transcript = e.results[0][0].transcript;
+        input.value += (input.value ? " " : "") + transcript;
+        input.dispatchEvent(new Event('input'));
+      };
+      recognition.onerror = () => stopListening();
+      recognition.onend = () => stopListening();
+    } else {
+      micBtn.style.display = 'none'; 
+    }
+
+    function toggleListening() {
+      if(!recognition) return;
+      if(isListening) { recognition.stop(); } 
+      else { recognition.start(); }
+    }
+    function stopListening() { isListening = false; micBtn.classList.remove("listening"); }
+    micBtn.addEventListener('click', toggleListening);
+
+    // ---- Session Management ----
+    let sessions = JSON.parse(localStorage.getItem('apexai-sessions')) || {};
+    let currentId = localStorage.getItem('apexai-current-id');
+
+    if (!currentId || !sessions[currentId]) createNewSession();
+
+    function createNewSession() {
+      currentId = Date.now().toString();
+      sessions[currentId] = { title: "New Chat", messages: [], persona: 'default' };
+      saveSessions(); loadSessionToUI();
+    }
+
+    function saveSessions() {
+      localStorage.setItem('apexai-sessions', JSON.stringify(sessions));
+      localStorage.setItem('apexai-current-id', currentId);
+      renderSessionList();
+    }
+
+    function switchSession(id) {
+      if (generating) return;
+      currentId = id; localStorage.setItem('apexai-current-id', currentId);
+      loadSessionToUI(); renderSessionList(); closeMobileMenu();
+    }
+
+    function renderSessionList() {
+      const list = document.getElementById('sessionList'); list.innerHTML = '';
+      Object.entries(sessions).reverse().forEach(([id, session]) => {
+        const div = document.createElement('div');
+        div.className = `session-item ${id === currentId ? 'active' : ''}`;
+        div.innerText = session.title; div.onclick = () => switchSession(id);
+        list.appendChild(div);
+      });
+    }
+
+    function loadSessionToUI() {
+      chatbox.innerHTML = '';
+      document.getElementById("personaSelect").value = sessions[currentId].persona || 'default';
+
+      if (sessions[currentId].messages.length === 0) {
+        chatbox.innerHTML = welcomeHTML; 
+        document.querySelectorAll(".prompt").forEach((b) => { b.onclick = () => { input.value = b.textContent.trim(); input.dispatchEvent(new Event('input')); input.focus(); }; });
+      } else {
+        sessions[currentId].messages.forEach((msg, index) => {
+          addMsgToDOM(msg.content, msg.role === 'user' ? 'user' : 'bot', index);
+          if (msg.stats && msg.role === 'bot') {
+            const statDiv = document.createElement('div'); statDiv.className = 'generation-stats'; statDiv.innerText = msg.stats;
+            chatbox.lastChild.appendChild(statDiv);
+          }
+        });
+      }
+      scrollBottom();
+    }
+
+    // ---- Custom Snippet Library ----
+    let snippets = JSON.parse(localStorage.getItem('apexai-snippets')) || [];
+    const snippetPanel = document.getElementById('snippetPanel');
+    
+    document.getElementById('openSnippetsBtn').onclick = () => snippetPanel.classList.add('open');
+    document.getElementById('closeSnippetsBtn').onclick = () => snippetPanel.classList.remove('open');
+    
+    document.getElementById('saveNewSnippetBtn').onclick = () => {
+      if(!input.value.trim()) return alert("Type code in the input box first to save it!");
+      const title = prompt("Name this snippet:");
+      if(title) {
+        snippets.push({ title, code: input.value.trim() });
+        localStorage.setItem('apexai-snippets', JSON.stringify(snippets));
+        renderSnippets(); input.value = ""; input.dispatchEvent(new Event('input'));
+      }
+    };
+
+    function renderSnippets() {
+      const list = document.getElementById('snippetList'); list.innerHTML = '';
+      snippets.forEach((snip, index) => {
+        const card = document.createElement('div'); card.className = 'snippet-card';
+        card.innerHTML = `
+          <div class="snippet-header">
+            <span class="snippet-title">${snip.title}</span>
+            <button class="snippet-del" data-idx="${index}">✕</button>
+          </div>
+          <div class="snippet-code">${snip.code}</div>
+        `;
+        card.onclick = (e) => {
+          if(e.target.classList.contains('snippet-del')) {
+            snippets.splice(e.target.dataset.idx, 1);
+            localStorage.setItem('apexai-snippets', JSON.stringify(snippets));
+            renderSnippets();
+          } else {
+            input.value = snip.code; input.dispatchEvent(new Event('input')); input.focus();
+            if(window.innerWidth <= 768) snippetPanel.classList.remove('open');
+          }
+        };
+        list.appendChild(card);
+      });
+    }
+    renderSnippets();
+
+
+    // ---- Live HTML Preview & Copy Engine ----
+    const renderer = new marked.Renderer();
+    const originalCode = renderer.code.bind(renderer);
+    
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+
+    renderer.code = function(code, language, isEscaped) {
+      const highlighted = originalCode(code, language, isEscaped);
+      const isHtml = language === 'html' || language === 'xml';
+      
+      let actions = `<div class="code-actions">`;
+      if(isHtml) { actions += `<button class="code-btn preview-btn" data-raw="${escapeHtml(code)}">Preview</button>`; }
+      actions += `<button class="code-btn copy-btn">Copy</button></div>`;
+      
+      return `<div class="code-wrapper">${actions}${highlighted}</div>`;
+    };
+    
+    marked.setOptions({
+      renderer: renderer, breaks: true,
+      highlight: function(code, lang) {
+        const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+        return hljs.highlight(code, { language }).value;
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (e.target.classList.contains('copy-btn')) {
+        const wrapper = e.target.closest('.code-wrapper');
+        navigator.clipboard.writeText(wrapper.querySelector('code').innerText);
+        e.target.innerText = "Copied!"; setTimeout(() => e.target.innerText = "Copy", 2000);
+      }
+      if (e.target.classList.contains('preview-btn')) {
+        const modal = document.getElementById('previewModal');
+        const frame = document.getElementById('previewFrame');
+        const txt = document.createElement("textarea");
+        txt.innerHTML = e.target.getAttribute('data-raw');
+        frame.srcdoc = txt.value;
+        modal.classList.add('open');
+      }
+    });
+    
+    document.getElementById('closePreview').onclick = () => document.getElementById('previewModal').classList.remove('open');
+
+    // ---- Exports & Edits ----
+    document.getElementById("exportBtn").addEventListener("click", () => {
+      if (sessions[currentId].messages.length === 0) return;
+      let mdText = `# ${sessions[currentId].title}\n\n`;
+      sessions[currentId].messages.forEach(msg => { mdText += `### ${msg.role === 'user' ? 'User' : 'ApexAI'}\n${msg.content}\n\n---\n\n`; });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([mdText], { type: "text/markdown" }));
+      a.download = `ApexAI_${sessions[currentId].title.replace(/[^a-z0-9]/gi, '_')}.md`; a.click();
+    });
+
+    window.editMessage = function(index) {
+      if (generating) return;
+      input.value = sessions[currentId].messages[index].content; input.dispatchEvent(new Event('input')); input.focus();
+      sessions[currentId].messages = sessions[currentId].messages.slice(0, index);
+      saveSessions(); loadSessionToUI();
+    };
+
+    // ---- Basic UI Wiring ----
+    renderSessionList(); loadSessionToUI(); init();
+
+    document.getElementById("personaSelect").addEventListener('change', (e) => { sessions[currentId].persona = e.target.value; saveSessions(); });
+    document.getElementById("newChatBtn").addEventListener("click", () => { if(!generating) { createNewSession(); closeMobileMenu(); } });
+    document.getElementById("clearBtn").addEventListener("click", () => {
+      if(generating) return; delete sessions[currentId]; const keys = Object.keys(sessions);
+      currentId = keys.length > 0 ? keys[keys.length - 1] : null; if (!currentId) createNewSession();
+      saveSessions(); loadSessionToUI(); closeMobileMenu();
+    });
+
+    function closeMobileMenu() { document.getElementById("sidebar").classList.remove("open"); document.getElementById("mobileOverlay").classList.remove("open"); }
+    document.getElementById("menuToggle").addEventListener("click", () => { document.getElementById("sidebar").classList.toggle("open"); document.getElementById("mobileOverlay").classList.toggle("open"); });
+    document.getElementById("mobileOverlay").addEventListener("click", closeMobileMenu);
+
+    input.addEventListener("input", () => {
+      input.style.height = "26px"; input.style.height = (input.scrollHeight) + "px";
+      sendBtn.disabled = input.value.trim() === "" || (!ready || generating);
+    });
+    input.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSendAction(); } });
+    sendBtn.addEventListener("click", handleSendAction);
+
+    // File Drop
+    document.body.addEventListener('dragover', (e) => { e.preventDefault(); if(!generating) document.body.classList.add('drag-active'); });
+    document.body.addEventListener('dragleave', (e) => { if (e.relatedTarget === null) document.body.classList.remove('drag-active'); });
+    document.body.addEventListener('drop', (e) => {
+      e.preventDefault(); document.body.classList.remove('drag-active');
+      if(generating || !ready || !e.dataTransfer.files[0]) return;
+      const reader = new FileReader(); reader.onload = (ev) => { input.value += (input.value ? "\n\n" : "") + ev.target.result; input.dispatchEvent(new Event('input')); };
+      reader.readAsText(e.dataTransfer.files[0]);
+    });
+
+    // ---- Engine Initialization ----
+    async function init() {
+      // DANGEROUS MOBILE WARNING
+      if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        alert("WARNING: You are opening this on a mobile device. The new, smarter Phi-3.5 AI requires roughly 3-4GB of RAM and will almost certainly crash your phone. For best results, use a computer.");
+      }
+
+      if (!("gpu" in navigator)) { setStatus("HARDWARE ERROR", 0); return addMsgToDOM("WebGPU is missing. Access via Chrome or Edge.", "bot error", -1); }
+      try {
+        setStatus("LOADING 0%", 0);
+        engine = await webllm.CreateMLCEngine(modelId, { initProgressCallback: (p) => { setStatus(`LOADING ${Math.round((p.progress||0)*100)}%`, Math.round((p.progress||0)*100)); } });
+        ready = true; setStatus("ONLINE", 100); input.disabled = false; input.focus();
+      } catch (error) { setStatus("OFFLINE", 0); addMsgToDOM("Engine failed to initialize. Ensure WebGPU is active.", "bot error", -1); }
+    }
+
+    function handleSendAction() { if (generating && engine && engine.interruptGenerate) { stopRequested = true; engine.interruptGenerate(); } else { sendMessage(); } }
+    function setStatus(label, percent) { document.getElementById("status").textContent = label; document.getElementById("progressBar").style.width = `${percent}%`; }
+    function scrollBottom() { chatbox.scrollTop = chatbox.scrollHeight; }
+
+    function addMsgToDOM(text, cls, index) {
+      const welcomeEl = document.getElementById("welcome");
+      if (welcomeEl && welcomeEl.parentNode) welcomeEl.parentNode.removeChild(welcomeEl);
+
+      const container = document.createElement("div"); container.className = `msg-container ${cls}`;
+      const msgDiv = document.createElement("div"); msgDiv.className = "msg";
+      
+      if(cls === "user") {
+        msgDiv.textContent = text; container.appendChild(msgDiv);
+        if(index !== undefined && index !== -1) {
+          const editBtn = document.createElement("button"); editBtn.className = "edit-btn"; editBtn.innerText = "✎ Edit";
+          editBtn.onclick = () => window.editMessage(index); container.appendChild(editBtn);
+        }
+      } else { msgDiv.innerHTML = marked.parse(text); container.appendChild(msgDiv); }
+
+      chatbox.appendChild(container); scrollBottom(); return msgDiv;
+    }
+
+    async function sendMessage() {
+      const text = input.value.trim(); if (!text || !ready) return;
+
+      generating = true; stopRequested = false;
+      input.value = ""; input.style.height = "26px"; input.disabled = true; 
+      sendBtn.innerHTML = "■"; sendBtn.classList.add("stop-mode");
+
+      if (sessions[currentId].messages.length === 0) {
+        sessions[currentId].title = text.length > 25 ? text.substring(0, 25) + "..." : text; renderSessionList();
+      }
+
+      const userIndex = sessions[currentId].messages.length;
+      addMsgToDOM(text, "user", userIndex); sessions[currentId].messages.push({ role: "user", content: text }); saveSessions();
+
+      const botDiv = addMsgToDOM("Computing sequence...", "bot", -1);
+      const systemPrompt = personas[sessions[currentId].persona] || personas.default;
+      const chatMessages = [{ role: "system", content: systemPrompt }, ...sessions[currentId].messages.slice(-12)];
+      const startTime = performance.now();
+
+      try {
+        let reply = "";
+        const chunks = await engine.chat.completions.create({ messages: chatMessages, stream: true, temperature: sessions[currentId].persona === 'creative' ? 0.7 : 0.3 });
+        for await (const chunk of chunks) {
+          if (stopRequested) break;
+          reply += chunk.choices[0]?.delta?.content || "";
+          botDiv.innerHTML = marked.parse(reply) || "Processing..."; scrollBottom();
+        }
+
+        const endTime = performance.now();
+        const finalReply = reply.trim() || (stopRequested ? "Process interrupted." : "No output.");
+        botDiv.innerHTML = marked.parse(finalReply);
+
+        const timeSec = ((endTime - startTime) / 1000).toFixed(1);
+        const estimatedTokens = Math.round(finalReply.split(/\s+/).length * 1.3);
+        const statsStr = `${timeSec}s · ~${(estimatedTokens / timeSec).toFixed(1)} tokens/s`;
+
+        const statDiv = document.createElement('div'); statDiv.className = 'generation-stats'; statDiv.innerText = statsStr;
+        botDiv.parentElement.appendChild(statDiv);
+        sessions[currentId].messages.push({ role: "assistant", content: finalReply, stats: statsStr }); saveSessions();
+      } catch (error) { 
+        console.error(error);
+        botDiv.classList.add("error"); 
+        botDiv.textContent = "Error: " + (error.message || "Execution interrupted."); 
+      } 
+      finally { generating = false; input.disabled = false; sendBtn.innerHTML = "➤"; sendBtn.classList.remove("stop-mode"); input.focus(); scrollBottom(); }
+    }
+  </script>
+</body>
+</html>    #dropOverlay { display: none; position: fixed; inset: 0; background: rgba(10, 11, 13, 0.95); z-index: 1000; place-items: center; color: var(--accent-glow); font-size: 24px; font-weight: 600; border: 4px dashed var(--accent-glow); pointer-events: none; }
     body.drag-active #dropOverlay { display: grid; }
     #mobileOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 90; opacity: 0; transition: opacity 0.3s; }
 
