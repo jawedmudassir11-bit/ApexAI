@@ -9,9 +9,6 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
 
-  <!-- Fixes GitHub Pages SharedArrayBuffer issue for WebLLM -->
-  <script src="https://cdn.jsdelivr.net/gh/gzuidhof/coi-serviceworker@master/coi-serviceworker.min.js"></script>
-
   <style>
     :root {
       --bg-main: #0a0b0d;
@@ -176,7 +173,6 @@
   <div id="dropOverlay">Drop file to read contents</div>
   <div id="mobileOverlay"></div>
 
-  <!-- HTML Live Preview Modal -->
   <div id="previewModal">
     <div class="preview-header">
       <h3>Live HTML Preview</h3>
@@ -232,7 +228,6 @@
     </div>
   </aside>
 
-  <!-- Custom Snippets Panel -->
   <aside id="snippetPanel">
     <div class="preview-header" style="background:transparent; border:none; padding:0;">
       <h2>Saved Snippets</h2>
@@ -240,26 +235,14 @@
     </div>
     <button id="saveNewSnippetBtn" class="btn-secondary">+ Save Current Input</button>
     <div class="snippet-list" id="snippetList">
-      <!-- Snippets inject here -->
-    </div>
+      </div>
   </aside>
 
   <main id="main">
     <button id="openSnippetsBtn">‹ Snippets</button>
 
     <section id="chatbox">
-      <div class="welcome" id="welcome">
-        <h2>Intelligent Workspace</h2>
-        <p class="muted">Run analysis, write code, and preview it live on-device.</p>
-
-        <div class="prompts">
-          <button class="prompt">Create a simple HTML button</button>
-          <button class="prompt">Explain this error message</button>
-          <button class="prompt">Write a Python script for file sorting</button>
-          <button class="prompt">Optimize this algorithm</button>
-        </div>
-      </div>
-    </section>
+      </section>
 
     <div id="inputArea">
       <div class="input-wrap">
@@ -281,6 +264,19 @@
     let ready = false;
     let generating = false;
     let stopRequested = false;
+
+    // Save welcome screen HTML to a string to prevent DOM deletion crash
+    const welcomeHTML = `
+      <div class="welcome" id="welcome">
+        <h2>Intelligent Workspace</h2>
+        <p class="muted">Run analysis, write code, and preview it live on-device.</p>
+        <div class="prompts">
+          <button class="prompt">Create a simple HTML button</button>
+          <button class="prompt">Explain this error message</button>
+          <button class="prompt">Write a Python script for file sorting</button>
+          <button class="prompt">Optimize this algorithm</button>
+        </div>
+      </div>`;
 
     const CREATOR_RULE = "If the user asks who made you, who created you, who your founder is, or who developed you, you must answer explicitly and concisely: 'Mudassir Jawed'. Do not mention OpenAI, MLC, WebLLM, or any other entities.";
     const personas = {
@@ -360,10 +356,10 @@
 
     function loadSessionToUI() {
       chatbox.innerHTML = '';
-      document.getElementById("personaSelect").value = sessions[currentId].persona;
+      document.getElementById("personaSelect").value = sessions[currentId].persona || 'default';
 
       if (sessions[currentId].messages.length === 0) {
-        chatbox.appendChild(document.getElementById("welcome").cloneNode(true));
+        chatbox.innerHTML = welcomeHTML; // Safely inject from string
         document.querySelectorAll(".prompt").forEach((b) => { b.onclick = () => { input.value = b.textContent.trim(); input.dispatchEvent(new Event('input')); input.focus(); }; });
       } else {
         sessions[currentId].messages.forEach((msg, index) => {
