@@ -9,6 +9,9 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
 
+  <!-- Fixes GitHub Pages SharedArrayBuffer issue for WebLLM -->
+  <script src="https://cdn.jsdelivr.net/gh/gzuidhof/coi-serviceworker@master/coi-serviceworker.min.js"></script>
+
   <style>
     :root {
       --bg-main: #0a0b0d;
@@ -321,7 +324,6 @@
     function stopListening() { isListening = false; micBtn.classList.remove("listening"); }
     micBtn.addEventListener('click', toggleListening);
 
-
     // ---- Session Management ----
     let sessions = JSON.parse(localStorage.getItem('apexai-sessions')) || {};
     let currentId = localStorage.getItem('apexai-current-id');
@@ -423,7 +425,6 @@
     const renderer = new marked.Renderer();
     const originalCode = renderer.code.bind(renderer);
     
-    // Function to safely escape HTML to be stored in a data attribute
     function escapeHtml(str) {
       return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
@@ -459,11 +460,10 @@
         const modal = document.getElementById('previewModal');
         const frame = document.getElementById('previewFrame');
         
-        // Decode the raw HTML from the data attribute
         const txt = document.createElement("textarea");
         txt.innerHTML = e.target.getAttribute('data-raw');
         
-        frame.srcdoc = txt.value; // Inject HTML safely via srcdoc
+        frame.srcdoc = txt.value;
         modal.classList.add('open');
       }
     });
@@ -594,4 +594,4 @@
     }
   </script>
 </body>
-</html>   
+</html>
