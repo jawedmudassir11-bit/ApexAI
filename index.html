@@ -265,7 +265,7 @@
     let generating = false;
     let stopRequested = false;
 
-    // Save welcome screen HTML to a string to prevent DOM deletion crash
+    // Save welcome screen HTML to a string to prevent DOM deletion crash on refresh
     const welcomeHTML = `
       <div class="welcome" id="welcome">
         <h2>Intelligent Workspace</h2>
@@ -278,7 +278,7 @@
         </div>
       </div>`;
 
-    const CREATOR_RULE = "If the user asks who made you, who created you, who your founder is, or who developed you, you must answer explicitly and concisely: 'Mudassir Jawed'. Do not mention OpenAI, MLC, WebLLM, or any other entities.";
+    const CREATOR_RULE = "If the user asks who made you, who created you, who your founder is, or who developed you, you must answer explicitly and concisely: 'Mudassir Jawed'. Do not mention OpenAI, Google, WebLLM, or any other entities.";
     const personas = {
       default: "You are ApexAI, a professional analytical intelligence agent. Provide precise solutions. " + CREATOR_RULE,
       coder: "You are ApexAI, an expert software engineer. Focus entirely on clean, robust code. " + CREATOR_RULE,
@@ -309,7 +309,7 @@
       recognition.onerror = () => stopListening();
       recognition.onend = () => stopListening();
     } else {
-      micBtn.style.display = 'none'; // Hide if unsupported
+      micBtn.style.display = 'none'; // Hide if browser doesn't support speech
     }
 
     function toggleListening() {
@@ -455,10 +455,8 @@
       if (e.target.classList.contains('preview-btn')) {
         const modal = document.getElementById('previewModal');
         const frame = document.getElementById('previewFrame');
-        
         const txt = document.createElement("textarea");
         txt.innerHTML = e.target.getAttribute('data-raw');
-        
         frame.srcdoc = txt.value;
         modal.classList.add('open');
       }
@@ -585,7 +583,11 @@
         const statDiv = document.createElement('div'); statDiv.className = 'generation-stats'; statDiv.innerText = statsStr;
         botDiv.parentElement.appendChild(statDiv);
         sessions[currentId].messages.push({ role: "assistant", content: finalReply, stats: statsStr }); saveSessions();
-      } catch (error) { botDiv.classList.add("error"); botDiv.textContent = "Execution interrupted."; } 
+      } catch (error) { 
+        console.error(error);
+        botDiv.classList.add("error"); 
+        botDiv.textContent = "Error: " + (error.message || "Execution interrupted."); 
+      } 
       finally { generating = false; input.disabled = false; sendBtn.innerHTML = "➤"; sendBtn.classList.remove("stop-mode"); input.focus(); scrollBottom(); }
     }
   </script>
