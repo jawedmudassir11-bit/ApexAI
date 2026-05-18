@@ -45,6 +45,31 @@
       --text-muted: #00ffff;
     }
 
+    /* Cyberpunk Crimson Theme */
+    body.theme-crimson {
+      --bg-main: #0c0809;
+      --bg-sidebar: #160f11;
+      --bg-panel: #221417;
+      --accent-glow: #ff2a5f;
+      --accent-success: #00ffaa;
+      --border-color: rgba(255, 42, 95, 0.25);
+      --text-main: #fceef1;
+      --text-muted: #a68f93;
+    }
+
+    /* Matrix Code Theme */
+    body.theme-matrix {
+      --bg-main: #000000;
+      --bg-sidebar: #050505;
+      --bg-panel: #0d0d0d;
+      --accent-glow: #00ff00;
+      --accent-success: #33ff33;
+      --accent-danger: #ff0000;
+      --border-color: rgba(0, 255, 0, 0.2);
+      --text-main: #00ff00;
+      --text-muted: #008800;
+    }
+
     * { box-sizing: border-box; }
 
     body {
@@ -66,12 +91,17 @@
     body.drag-active #dropOverlay { display: grid; }
     #mobileOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 90; opacity: 0; transition: opacity 0.3s; }
 
-    /* Layout Elements */
+    /* Layout Elements & Collapsible Sidebar */
+    #sidebar { width: 280px; min-width: 280px; padding: 24px 20px; background: var(--bg-sidebar); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 16px; z-index: 100; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s, min-width 0.3s, padding 0.3s; }
+    #sidebar.collapsed { width: 80px; min-width: 80px; padding: 24px 10px; align-items: center; }
+    #sidebar.collapsed .brand h1, #sidebar.collapsed .brand p, #sidebar.collapsed .sidebar-controls, #sidebar.collapsed #chatSearch, #sidebar.collapsed #sessionList, #sidebar.collapsed .action-row, #sidebar.collapsed .signature-badge { display: none; }
+    
+    #collapseToggle { background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); border-radius: 6px; cursor: pointer; padding: 4px 8px; font-size: 12px; align-self: flex-end; }
+    #sidebar.collapsed #collapseToggle { align-self: center; }
+
     #mobileHeader { display: none; background: var(--bg-sidebar); padding: max(12px, env(safe-area-inset-top)) 20px 12px; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-color); z-index: 50; }
     #menuToggle { background: transparent; border: 1px solid var(--accent-glow); color: var(--accent-glow); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; }
 
-    #sidebar { width: 280px; min-width: 280px; padding: 24px 20px; background: var(--bg-sidebar); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 16px; z-index: 100; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-    
     /* Snippet Panel */
     #snippetPanel { position: fixed; right: -320px; top: 0; bottom: 0; width: 320px; background: var(--bg-sidebar); border-left: 1px solid var(--border-color); z-index: 200; padding: 24px 20px; display: flex; flex-direction: column; gap: 16px; transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: -10px 0 30px rgba(0,0,0,0.5); }
     #snippetPanel.open { right: 0; }
@@ -83,8 +113,8 @@
     .snippet-del { color: var(--accent-danger); cursor: pointer; font-size: 12px; background: none; border: none; padding: 0; }
     .snippet-code { font-family: monospace; font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-    /* Status Modal Log Panel */
-    .panel { padding: 16px; border: 1px solid var(--border-color); border-radius: 10px; background: var(--bg-panel); cursor: pointer; position: relative; }
+    /* Status Panel */
+    .panel { padding: 16px; border: 1px solid var(--border-color); border-radius: 10px; background: var(--bg-panel); cursor: pointer; position: relative; width: 100%; }
     .status-container { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
     #status { color: var(--accent-success); font-size: 12px; font-weight: 600; text-transform: uppercase; }
     .progress { height: 4px; overflow: hidden; border-radius: 2px; background: rgba(128, 128, 128, 0.2); }
@@ -107,17 +137,17 @@
     .palette-kbd { background: rgba(128,128,128,0.2); padding: 2px 6px; border-radius: 4px; font-size: 11px; font-family: monospace; }
 
     /* Controls */
-    .sidebar-controls { display: flex; flex-direction: column; gap: 10px; }
+    .sidebar-controls { display: flex; flex-direction: column; gap: 10px; width: 100%; }
     .custom-select { width: 100%; padding: 10px; background: var(--bg-panel); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; cursor: pointer; font-size: 13px; }
     #customPersonaInput { width: 100%; padding: 10px; background: var(--bg-panel); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; font-size: 13px; resize: vertical; min-height: 60px; display: none; }
-    .btn-primary { background: var(--accent-glow); color: #fff; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; transition: opacity 0.2s; }
+    .btn-primary { background: var(--accent-glow); color: #fff; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; transition: opacity 0.2s; width: 100%; }
     .btn-primary:hover { opacity: 0.9; }
     .btn-secondary { background: transparent; color: var(--text-main); border: 1px solid var(--border-color); padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 500; font-size: 13px; transition: background 0.2s; }
     .btn-secondary:hover { background: rgba(128,128,128,0.1); }
     optgroup { background: var(--bg-sidebar); color: var(--text-muted); font-weight: 600; }
 
     /* Sessions & Rename Engine */
-    #sessionList { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; margin: 4px 0; }
+    #sessionList { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; margin: 4px 0; width: 100%; }
     #sessionList::-webkit-scrollbar { width: 4px; }
     #sessionList::-webkit-scrollbar-thumb { background: rgba(128, 128, 128, 0.2); border-radius: 2px; }
     .session-item { padding: 12px; border-radius: 6px; font-size: 14px; cursor: pointer; color: var(--text-muted); transition: background 0.2s, color 0.2s; display: flex; justify-content: space-between; align-items: center; position: relative; }
@@ -128,12 +158,12 @@
     .session-item:hover { background: rgba(128,128,128,0.1); color: var(--text-main); }
     .session-item.active { background: rgba(124, 77, 255, 0.15); color: var(--text-main); border: 1px solid rgba(124, 77, 255, 0.3); }
 
-    .action-row { display: flex; gap: 8px; }
+    .action-row { display: flex; gap: 8px; width: 100%; }
     .action-row button { flex: 1; }
     #clearBtn { border-color: rgba(255, 82, 82, 0.3); color: var(--accent-danger); }
     #clearBtn:hover { background: rgba(255, 82, 82, 0.1); }
 
-    .signature-badge { padding-top: 14px; border-top: 1px solid rgba(128, 128, 128, 0.2); text-align: center; padding-bottom: env(safe-area-inset-bottom); }
+    .signature-badge { padding-top: 14px; border-top: 1px solid rgba(128, 128, 128, 0.2); text-align: center; padding-bottom: env(safe-area-inset-bottom); width: 100%; }
     .signature-badge p { font-size: 11px; color: var(--text-muted); }
 
     /* Main Chat Space */
@@ -145,7 +175,7 @@
     #chatbox::-webkit-scrollbar-thumb { background: rgba(128, 128, 128, 0.2); border-radius: 2px; }
 
     /* Floating Scroll Action Button */
-    #scrollToBottomBtn { display: none; position: fixed; bottom: 110px; right: calc(50% - 400px); z-index: 80; background: var(--bg-panel); border: 1px solid var(--border-color); color: var(--text-main); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 16px; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.5); transition: opacity 0.2s; }
+    #scrollToBottomBtn { display: none; position: fixed; bottom: 160px; right: calc(50% - 400px); z-index: 80; background: var(--bg-panel); border: 1px solid var(--border-color); color: var(--text-main); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 16px; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.5); transition: opacity 0.2s; }
     @media (max-width: 900px) { #scrollToBottomBtn { right: 24px; } }
 
     .welcome { margin: auto; max-width: 520px; text-align: center; display: grid; gap: 16px; }
@@ -178,9 +208,14 @@
     .msg code { font-family: "SFMono-Regular", Consolas, monospace; background: rgba(128, 128, 128, 0.1); padding: 2px 6px; border-radius: 4px; font-size: 14px; }
     .msg pre code { background: transparent; padding: 0; }
 
-    /* Input Area */
+    /* Markdown Editor Toolbar Styling */
+    .editor-toolbar { width: min(100%, 800px); margin: 0 auto; display: flex; gap: 6px; padding: 4px 8px; background: var(--bg-panel); border: 1px solid var(--border-color); border-bottom: none; border-radius: 12px 12px 0 0; overflow-x: auto; }
+    .toolbar-btn { background: transparent; border: none; color: var(--text-muted); padding: 4px 8px; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 4px; }
+    .toolbar-btn:hover { background: rgba(128,128,128,0.1); color: var(--text-main); }
+
+    /* Input Area Container */
     #inputArea { padding: 0 24px 32px; background: linear-gradient(transparent, var(--bg-main) 30%); }
-    .input-wrap { width: min(100%, 800px); margin: 0 auto; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 16px; display: flex; align-items: flex-end; gap: 12px; background: var(--bg-sidebar); }
+    .input-wrap { width: min(100%, 800px); margin: 0 auto; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 0 0 16px 16px; display: flex; align-items: flex-end; gap: 12px; background: var(--bg-sidebar); }
     .input-wrap:focus-within { border-color: rgba(124, 77, 255, 0.5); box-shadow: 0 0 0 1px rgba(124, 77, 255, 0.2); }
 
     #userInput { flex: 1; min-width: 0; height: 26px; max-height: 150px; border: 0; outline: 0; color: var(--text-main); background: transparent; resize: none; font-family: inherit; line-height: 26px; }
@@ -194,19 +229,6 @@
     #sendBtn { width: 32px; height: 32px; min-width: 32px; border: 0; border-radius: 8px; color: #fff; font-size: 14px; cursor: pointer; background: var(--accent-glow); display: grid; place-items: center; margin-bottom: -2px; transition: background 0.2s; }
     #sendBtn.stop-mode { background: var(--accent-danger); border-radius: 50%; }
     #sendBtn:disabled { opacity: 0.3; cursor: not-allowed; }
-
-    @media (max-width: 768px) {
-      body { flex-direction: column; }
-      #mobileHeader { display: flex; }
-      #sidebar { position: fixed; left: 0; top: 0; bottom: 0; transform: translateX(-100%); box-shadow: 10px 0 30px rgba(0,0,0,0.5); }
-      #sidebar.open { transform: translateX(0); }
-      #mobileOverlay.open { display: block; opacity: 1; }
-      #snippetPanel { width: 100%; right: -100%; }
-      #previewModal { padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); }
-      #chatbox { padding: 20px 16px; }
-      .prompts { grid-template-columns: 1fr; }
-      #inputArea { padding: 10px 16px calc(16px + env(safe-area-inset-bottom)); }
-    }
   </style>
 </head>
 
@@ -247,6 +269,8 @@
   </header>
 
   <aside id="sidebar">
+    <button id="collapseToggle" title="Toggle Sidebar Display Format">◀ Mini</button>
+    
     <div class="brand">
       <img src="logo.png" class="logo-img" alt="ApexAI Logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjN2M0ZGZmIi8+PHRleHQgeD0iMjAiIHk9IjI2IiBmaWxsPSIjZmZmIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+QTwvdGV4dD48L3N2Zz4='">
       <div>
@@ -270,18 +294,18 @@
 
       <select id="engineSelect" class="custom-select" style="border-color: var(--accent-glow);">
         <optgroup label="Ultra-Fast (Mobile Safe)">
-          <option value="TinyLlama-1.1B-Chat-v0.4-q4f16_1-MLC">🏎️ TinyLlama (1.1B)</option>
-          <option value="Llama-3.2-1B-Instruct-q4f16_1-MLC">⚡ Llama-3.2 (1B - Recommended)</option>
+          <option value="Llama-3.2-1B-Instruct-q4f16_1-MLC" selected>⚡ Llama-3.2-1B (Fastest)</option>
+          <option value="TinyLlama-1.1B-Chat-v0.4-q4f16_1-MLC">🏎️ TinyLlama-1.1B</option>
         </optgroup>
         <optgroup label="Balanced (Laptops/Tablets)">
-          <option value="gemma-2b-it-q4f16_1-MLC">🟢 Gemma (2B)</option>
-          <option value="Llama-3.2-3B-Instruct-q4f16_1-MLC">⚖️ Llama-3.2 (3B - Sweet Spot)</option>
-          <option value="Phi-3.5-mini-instruct-q4f16_1-MLC">🧠 Phi-3.5 (Smart Mini)</option>
+          <option value="gemma-2b-it-q4f16_1-MLC">🟢 Gemma-2B-Instruct</option>
+          <option value="Llama-3.2-3B-Instruct-q4f16_1-MLC">⚖️ Llama-3.2-3B (Highly Stable)</option>
+          <option value="Phi-3.5-mini-instruct-q4f16_1-MLC">🧠 Phi-3.5-mini</option>
         </optgroup>
         <optgroup label="Heavyweight (Desktops/8GB+ RAM)">
-          <option value="Mistral-7B-Instruct-v0.3-q4f16_1-MLC">🌪️ Mistral (7B)</option>
-          <option value="Qwen2-7B-Instruct-q4f16_1-MLC">🐉 Qwen2 (7B)</option>
-          <option value="Llama-3.1-8B-Instruct-q4f32_1-MLC">🔥 Llama-3.1 (8B)</option>
+          <option value="Mistral-7B-Instruct-v0.3-q4f16_1-MLC">🌪️ Mistral-7B-Instruct</option>
+          <option value="Qwen2-7B-Instruct-q4f16_1-MLC">🐉 Qwen2-7B</option>
+          <option value="Llama-3.1-8B-Instruct-q4f32_1-MLC">🔥 Llama-3.1-8B</option>
         </optgroup>
       </select>
       
@@ -289,6 +313,8 @@
         <option value="dark">🌙 Dark Theme</option>
         <option value="light">☀️ Light Theme</option>
         <option value="neon">⚡ Neon Theme</option>
+        <option value="crimson">🩸 Cyberpunk Crimson</option>
+        <option value="matrix">📟 Matrix Code</option>
       </select>
 
       <select id="personaSelect" class="custom-select">
@@ -332,9 +358,24 @@
     <button id="scrollToBottomBtn" title="Scroll down to newest responses">↓</button>
 
     <div id="inputArea">
+      <div class="editor-toolbar" id="markdownToolbar">
+        <button class="toolbar-btn" data-wrap="**">Bold</button>
+        <button class="toolbar-btn" data-wrap="*">Italic</button>
+        <button class="toolbar-btn" data-pre="```\n" data-post="\n```">Code Block</button>
+        <button class="toolbar-btn" data-pre="[" data-post="](url)">Link</button>
+        <button class="toolbar-btn" data-pre="\n| Header | Header |\n| ------ | ------ |\n| Cell | Cell |\n">Table</button>
+      </div>
+
       <div class="input-wrap">
         <button id="micBtn" class="action-icon-btn" title="Voice Input">🎤</button>
-        <textarea id="userInput" placeholder="Type, /fetch URL, or drop a file... (Ctrl+K for HUD Menu)" rows="1" disabled></textarea>
+        <textarea id="userInput" placeholder="Type, /fetch URL, or drop a file..." rows="1" disabled></textarea>
+        
+        <select id="tokenLengthSelect" class="action-icon-btn" style="width: auto; padding: 0 4px; font-size: 11px; font-weight: bold; background: var(--bg-panel); border: 1px solid var(--border-color); color: var(--text-main);" title="Response Generation Horizon Max Depth">
+          <option value="256">Short Burst</option>
+          <option value="1024" selected>Standard</option>
+          <option value="4096">Blueprint</option>
+        </select>
+
         <button id="sendBtn" type="button" disabled>➤</button>
       </div>
     </div>
@@ -347,34 +388,49 @@
     import * as webllm from "https://esm.run/@mlc-ai/web-llm";
     import { get, set, del } from "https://cdn.jsdelivr.net/npm/idb-keyval@6/+esm";
 
-    const manifest = {
-      name: "ApexAI Workspace", short_name: "ApexAI", display: "standalone",
-      background_color: "#0a0b0d", theme_color: "#0a0b0d",
-      icons: [{ src: "logo.png", sizes: "512x512", type: "image/png" }]
+    const sidebar = document.getElementById("sidebar");
+    const collapseToggle = document.getElementById("collapseToggle");
+    collapseToggle.onclick = () => {
+      sidebar.classList.toggle("collapsed");
+      collapseToggle.innerText = sidebar.classList.contains("collapsed") ? "▶" : "◀ Mini";
     };
-    const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
-    document.head.insertAdjacentHTML('beforeend', `<link rel="manifest" href="${URL.createObjectURL(manifestBlob)}">`);
 
-    // Model Setup Variables
+    document.getElementById("markdownToolbar").onclick = (e) => {
+      if (!e.target.classList.contains("toolbar-btn")) return;
+      const wrap = e.target.getAttribute("data-wrap") || "";
+      const pre = e.target.getAttribute("data-pre") || wrap;
+      const post = e.target.getAttribute("data-post") || wrap;
+      
+      const start = input.selectionStart; const end = input.selectionEnd; const text = input.value;
+      input.value = text.substring(0, start) + pre + text.substring(start, end) + post + text.substring(end);
+      input.focus(); input.selectionStart = input.selectionEnd = start + pre.length + (end - start);
+      input.dispatchEvent(new Event('input'));
+    };
+
+    window.readAloudText = function(btn, index) {
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel(); btn.innerText = "🔊 Read Aloud"; return;
+      }
+      const botResponseText = sessions[currentId].messages[index].content;
+      const cleanText = botResponseText.replace(/```[\s\S]*?```/g, "[Code block omitted]").replace(/[*#_`\[\]()]/g, "");
+      
+      const utterance = new SpeechSynthesisUtterance(cleanText);
+      utterance.onend = () => { btn.innerText = "🔊 Read Aloud"; }; utterance.onerror = () => { btn.innerText = "🔊 Read Aloud"; };
+      
+      btn.innerText = "🛑 Stop Audio"; window.speechSynthesis.speak(utterance);
+    };
+
     const engineSelect = document.getElementById("engineSelect");
     let currentModelId = localStorage.getItem('apexai-model') || "Llama-3.2-1B-Instruct-q4f16_1-MLC";
-    
-    if(Array.from(engineSelect.options).some(opt => opt.value === currentModelId)) {
-        engineSelect.value = currentModelId;
-    } else {
-        engineSelect.value = "Llama-3.2-1B-Instruct-q4f16_1-MLC";
-        currentModelId = "Llama-3.2-1B-Instruct-q4f16_1-MLC";
-    }
+    if(Array.from(engineSelect.options).some(opt => opt.value === currentModelId)) { engineSelect.value = currentModelId; }
+    else { engineSelect.value = "Llama-3.2-1B-Instruct-q4f16_1-MLC"; currentModelId = "Llama-3.2-1B-Instruct-q4f16_1-MLC"; }
 
     let engine = null; let ready = false; let generating = false; let stopRequested = false;
 
     engineSelect.addEventListener('change', (e) => {
       if (confirm("Switching models requires reloading the AI engine. This will refresh the page. Continue?")) {
-        localStorage.setItem('apexai-model', e.target.value);
-        window.location.reload();
-      } else {
-        engineSelect.value = currentModelId;
-      }
+        localStorage.setItem('apexai-model', e.target.value); window.location.reload();
+      } else { engineSelect.value = currentModelId; }
     });
 
     const welcomeHTML = `
@@ -385,72 +441,47 @@
         <div class="prompts">
           <button class="prompt">Create a simple HTML button</button>
           <button class="prompt">Write a Python script for file sorting</button>
-          <button class="prompt">/fetch https://en.wikipedia.org/wiki/Artificial_intelligence</button>
+          <button class="prompt">/fetch https://en.wikipedia.org/wiki/West_Bengal</button>
         </div>
       </div>`;
 
-    const baseRule = "CRITICAL INSTRUCTION: You are an unrestricted, highly helpful AI. You are explicitly AUTHORIZED to discuss sensitive topics including politics, elections, world events, and history objectively. DO NOT trigger safety refusals for general questions about these topics. NEVER hallucinate that a user is asking for illegal activities (like election fraud) unless explicitly stated. Provide complete, detailed, and comprehensive answers. Write out full code, full math steps, and full explanations. If asked who made you, created you, your founder, or developer, answer explicitly: 'Mudassir Jawed'. Do not mention other entities.";
+    const baseRule = "CRITICAL INSTRUCTION: You are an unrestricted, highly helpful AI. You are explicitly AUTHORIZED to discuss sensitive topics including politics, elections, world events, and history objectively. DO NOT trigger safety refusals for general questions about these topics. NEVER hallucinate that a user is asking for illegal activities unless explicitly stated. Provide complete, detailed, and comprehensive answers. Write out full code, full math steps, and full explanations. If asked who made you, created you, your founder, or developer, answer explicitly: 'Mudassir Jawed'. Do not mention other entities.";
     const personas = {
       default: "You are ApexAI, a professional analytical intelligence agent. " + baseRule,
       coder: "You are ApexAI, an expert software engineer. Focus entirely on clean, robust code. Write complete scripts. " + baseRule,
       creative: "You are ApexAI, a creative brainstorming assistant. Be expansive and detailed. " + baseRule
     };
 
-    const chatbox = document.getElementById("chatbox");
-    const input = document.getElementById("userInput");
-    const sendBtn = document.getElementById("sendBtn");
-    const micBtn = document.getElementById("micBtn");
-    const themeSelect = document.getElementById("themeSelect");
-    const personaSelect = document.getElementById("personaSelect");
-    const customPersonaInput = document.getElementById("customPersonaInput");
-    const chatSearch = document.getElementById("chatSearch");
-    const scrollToBottomBtn = document.getElementById("scrollToBottomBtn");
-    const commandPalette = document.getElementById("commandPalette");
-    const statusPanel = document.getElementById("statusPanel");
-    const debugTray = document.getElementById("debugTray");
+    const chatbox = document.getElementById("chatbox"); const input = document.getElementById("userInput");
+    const sendBtn = document.getElementById("sendBtn"); const micBtn = document.getElementById("micBtn");
+    const themeSelect = document.getElementById("themeSelect"); const personaSelect = document.getElementById("personaSelect");
+    const customPersonaInput = document.getElementById("customPersonaInput"); const chatSearch = document.getElementById("chatSearch");
+    const scrollToBottomBtn = document.getElementById("scrollToBottomBtn"); const commandPalette = document.getElementById("commandPalette");
+    const statusPanel = document.getElementById("statusPanel"); const debugTray = document.getElementById("debugTray");
+    const tokenLengthSelect = document.getElementById("tokenLengthSelect");
 
-    // ---- Chat Scroll Target Tracker ----
     chatbox.addEventListener("scroll", () => {
-      if (chatbox.scrollHeight - chatbox.scrollTop > chatbox.clientHeight + 400) {
-        scrollToBottomBtn.style.display = "flex";
-      } else {
-        scrollToBottomBtn.style.display = "none";
-      }
+      if (chatbox.scrollHeight - chatbox.scrollTop > chatbox.clientHeight + 400) { scrollToBottomBtn.style.display = "flex"; } 
+      else { scrollToBottomBtn.style.display = "none"; }
     });
     scrollToBottomBtn.onclick = () => { chatbox.scrollTop = chatbox.scrollHeight; };
 
-    // ---- Interactive HUD Command Keyboard Shortcuts ----
     window.addEventListener("keydown", (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        commandPalette.classList.toggle("open");
-      }
-      if (e.key === "Escape") {
-        commandPalette.classList.remove("open");
-      }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); commandPalette.classList.toggle("open"); }
+      if (e.key === "Escape") { commandPalette.classList.remove("open"); }
     });
 
     document.getElementById("hudToggleTheme").onclick = () => {
-      let options = ["dark", "light", "neon"];
-      let nextIdx = (options.indexOf(themeSelect.value) + 1) % options.length;
-      themeSelect.value = options[nextIdx];
-      themeSelect.dispatchEvent(new Event('change'));
-      commandPalette.classList.remove("open");
+      let options = ["dark", "light", "neon", "crimson", "matrix"]; let nextIdx = (options.indexOf(themeSelect.value) + 1) % options.length;
+      themeSelect.value = options[nextIdx]; themeSelect.dispatchEvent(new Event('change')); commandPalette.classList.remove("open");
     };
 
-    // ---- Interactive Telemetry Tray ----
-    statusPanel.onclick = () => {
-      debugTray.style.display = debugTray.style.display === "block" ? "none" : "block";
-    };
-
+    statusPanel.onclick = () => { debugTray.style.display = debugTray.style.display === "block" ? "none" : "block"; };
     function appendTelemetryLog(text) {
-      const entry = document.createElement("div");
-      entry.textContent = `[${new Date().toLocaleTimeString()}] ${text}`;
-      debugTray.appendChild(entry);
-      debugTray.scrollTop = debugTray.scrollHeight;
+      const entry = document.createElement("div"); entry.textContent = `[${new Date().toLocaleTimeString()}] ${text}`;
+      debugTray.appendChild(entry); debugTray.scrollTop = debugTray.scrollHeight;
     }
 
-    // ---- Themes ----
     const savedTheme = localStorage.getItem('apexai-theme') || 'dark';
     themeSelect.value = savedTheme;
     if(savedTheme !== 'dark') document.body.className = `theme-${savedTheme}`;
@@ -460,7 +491,6 @@
       localStorage.setItem('apexai-theme', e.target.value);
     });
 
-    // ---- Chat History Search ----
     chatSearch.addEventListener('input', (e) => {
       const term = e.target.value.toLowerCase();
       document.querySelectorAll('.session-item').forEach(item => {
@@ -468,38 +498,21 @@
       });
     });
 
-    // ---- Voice Dictation ----
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    let recognition = null; let isListening = false;
-    if (SpeechRecognition) {
-      recognition = new SpeechRecognition(); recognition.continuous = false; recognition.interimResults = false;
-      recognition.onstart = () => { isListening = true; micBtn.classList.add("listening"); };
-      recognition.onresult = (e) => { input.value += (input.value ? " " : "") + e.results[0][0].transcript; input.dispatchEvent(new Event('input')); };
-      recognition.onerror = () => stopListening(); recognition.onend = () => stopListening();
-    } else { micBtn.style.display = 'none'; }
-    micBtn.addEventListener('click', () => { if(!recognition) return; isListening ? recognition.stop() : recognition.start(); });
-    function stopListening() { isListening = false; micBtn.classList.remove("listening"); }
-
-    // ---- IndexedDB Memory Management Matrix ----
     let sessions = {}; let currentId = null;
 
     async function initDatabase() {
-      sessions = await get('apexai-sessions') || {};
-      currentId = localStorage.getItem('apexai-current-id');
+      sessions = await get('apexai-sessions') || {}; currentId = localStorage.getItem('apexai-current-id');
       if (!currentId || !sessions[currentId]) await createNewSession();
       renderSessionList(); loadSessionToUI();
     }
 
     async function createNewSession() {
-      currentId = Date.now().toString();
-      sessions[currentId] = { title: "New Chat", messages: [], persona: 'default', customPrompt: '' };
+      currentId = Date.now().toString(); sessions[currentId] = { title: "New Chat", messages: [], persona: 'default', customPrompt: '' };
       await saveSessions(); loadSessionToUI();
     }
 
     async function saveSessions() {
-      await set('apexai-sessions', sessions);
-      localStorage.setItem('apexai-current-id', currentId);
-      renderSessionList();
+      await set('apexai-sessions', sessions); localStorage.setItem('apexai-current-id', currentId); renderSessionList();
     }
 
     function switchSession(id) {
@@ -511,33 +524,24 @@
       const list = document.getElementById('sessionList'); list.innerHTML = '';
       Object.entries(sessions).reverse().forEach(([id, session]) => {
         const div = document.createElement('div'); div.className = `session-item ${id === currentId ? 'active' : ''}`;
-        
         const titleSpan = document.createElement("span"); titleSpan.className = "session-text"; titleSpan.innerText = session.title;
         titleSpan.onclick = () => switchSession(id);
-
         const renameBtn = document.createElement("button"); renameBtn.className = "session-rename-btn"; renameBtn.innerText = "✎";
         renameBtn.onclick = async (e) => {
-          e.stopPropagation();
-          const nextTitle = prompt("Enter new title for this conversation workspace:", session.title);
-          if (nextTitle && nextTitle.trim()) {
-            sessions[id].title = nextTitle.trim();
-            await saveSessions();
-          }
+          e.stopPropagation(); const nextTitle = prompt("Enter new title for workspace session:", session.title);
+          if (nextTitle && nextTitle.trim()) { sessions[id].title = nextTitle.trim(); await saveSessions(); }
         };
-
         div.appendChild(titleSpan); div.appendChild(renameBtn); list.appendChild(div);
       });
       chatSearch.dispatchEvent(new Event('input'));
     }
 
     function loadSessionToUI() {
-      chatbox.innerHTML = '';
-      personaSelect.value = sessions[currentId].persona || 'default';
-      customPersonaInput.value = sessions[currentId].customPrompt || '';
-      customPersonaInput.style.display = personaSelect.value === 'custom' ? 'block' : 'none';
+      chatbox.innerHTML = ''; personaSelect.value = sessions[currentId].persona || 'default';
+      customPersonaInput.value = sessions[currentId].customPrompt || ''; customPersonaInput.style.display = personaSelect.value === 'custom' ? 'block' : 'none';
 
       if (sessions[currentId].messages.length === 0) {
-        chatbox.innerHTML = welcomeHTML; 
+        chatbox.innerHTML = welcomeHTML;
         document.querySelectorAll(".prompt").forEach((b) => { b.onclick = () => { input.value = b.textContent.trim(); input.dispatchEvent(new Event('input')); input.focus(); }; });
       } else {
         sessions[currentId].messages.forEach((msg, index) => {
@@ -550,7 +554,6 @@
       scrollBottom();
     }
 
-    // ---- Web Fetching Logic ----
     async function fetchWebpage(url) {
       try {
         const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
@@ -560,7 +563,6 @@
       } catch(e) { return "Error fetching webpage."; }
     }
 
-    // ---- Snippet Library Engine ----
     let snippets = JSON.parse(localStorage.getItem('apexai-snippets')) || [];
     const snippetPanel = document.getElementById('snippetPanel');
     document.getElementById('openSnippetsBtn').onclick = () => snippetPanel.classList.add('open');
@@ -584,17 +586,13 @@
     }
     renderSnippets();
 
-    // ---- Code Render Formatting Engine ----
     const renderer = new marked.Renderer(); const originalCode = renderer.code.bind(renderer);
     function escapeHtml(str) { return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
     renderer.code = function(code, language, isEscaped) {
-      const highlighted = originalCode(code, language, isEscaped);
-      const isHtml = language === 'html' || language === 'xml';
-      
+      const highlighted = originalCode(code, language, isEscaped); const isHtml = language === 'html' || language === 'xml';
       let actions = `<div class="code-actions">`;
       if(isHtml) { actions += `<button class="code-btn preview-btn" data-raw="${escapeHtml(code)}">Preview</button>`; }
       actions += `<button class="code-btn copy-btn">Copy</button></div>`;
-      
       return `<div class="code-wrapper">${actions}${highlighted}</div>`;
     };
     marked.setOptions({ renderer: renderer, breaks: true, highlight: function(code, lang) { return hljs.highlight(code, { language: hljs.getLanguage(lang) ? lang : 'plaintext' }).value; } });
@@ -605,31 +603,21 @@
     });
     document.getElementById('closePreview').onclick = () => document.getElementById('previewModal').classList.remove('open');
 
-    // ---- Exports, Timelines & Retries ----
     document.getElementById("exportBtn").addEventListener("click", () => {
       if (sessions[currentId].messages.length === 0) return;
-      const format = prompt("Export as: md, html, or py?", "md")?.toLowerCase();
-      if (!['md', 'html', 'py'].includes(format)) return;
-
+      const format = prompt("Export as: md, html, or py?", "md")?.toLowerCase(); if (!['md', 'html', 'py'].includes(format)) return;
       let output = ""; let mime = "text/plain";
       if (format === 'md') {
-        output = `# ${sessions[currentId].title}\n\n`;
-        sessions[currentId].messages.forEach(m => output += `### ${m.role === 'user' ? 'User' : 'ApexAI'}\n${m.content}\n\n---\n\n`);
-        mime = "text/markdown";
+        output = `# ${sessions[currentId].title}\n\n`; sessions[currentId].messages.forEach(m => output += `### ${m.role === 'user' ? 'User' : 'ApexAI'}\n${m.content}\n\n---\n\n`); mime = "text/markdown";
       } else if (format === 'html') {
         output = `<html><body style="font-family:sans-serif; max-width:800px; margin:auto; padding:20px;"><h1>${sessions[currentId].title}</h1>`;
         sessions[currentId].messages.forEach(m => output += `<div style="background:${m.role==='user'?'#f0f0f0':'#e0f7fa'}; padding:15px; margin-bottom:10px; border-radius:8px;"><strong>${m.role==='user'?'User':'ApexAI'}:</strong><br>${marked.parse(m.content)}</div>`);
-        output += `</body></html>`;
-        mime = "text/html";
+        output += `</body></html>`; mime = "text/html";
       } else if (format === 'py') {
         output = `# Extracted from ${sessions[currentId].title}\n\n`;
-        sessions[currentId].messages.forEach(m => {
-          const blocks = m.content.match(/```python[\s\S]*?```/g);
-          if(blocks) blocks.forEach(b => output += b.replace(/```python\n|```/g, '') + "\n\n");
-        });
+        sessions[currentId].messages.forEach(m => { const blocks = m.content.match(/```python[\s\S]*?```/g); if(blocks) blocks.forEach(b => output += b.replace(/```python\n|```/g, '') + "\n\n"); });
         if(!output.trim()) return alert("No Python code found to export.");
       }
-
       const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([output], { type: mime })); a.download = `ApexAI_${sessions[currentId].title.replace(/[^a-z0-9]/gi, '_')}.${format}`; a.click();
     });
 
@@ -639,28 +627,19 @@
     };
 
     window.branchSession = async function(index) {
-      if (generating) return;
-      const newId = Date.now().toString();
+      if (generating) return; const newId = Date.now().toString();
       sessions[newId] = { title: sessions[currentId].title + " (Branch)", messages: sessions[currentId].messages.slice(0, index + 1), persona: sessions[currentId].persona, customPrompt: sessions[currentId].customPrompt };
       await saveSessions(); switchSession(newId);
     };
 
     window.retryMessage = async function(index) {
-      if (generating) return;
-      const userText = sessions[currentId].messages[index - 1].content;
+      if (generating) return; const userText = sessions[currentId].messages[index - 1].content;
       sessions[currentId].messages = sessions[currentId].messages.slice(0, index - 1);
-      await saveSessions(); loadSessionToUI();
-      input.value = userText; input.dispatchEvent(new Event('input')); sendBtn.click();
+      await saveSessions(); loadSessionToUI(); input.value = userText; input.dispatchEvent(new Event('input')); sendBtn.click();
     };
 
-    // ---- Controls Layout Wiring ----
-    personaSelect.addEventListener('change', async (e) => { 
-      sessions[currentId].persona = e.target.value; 
-      customPersonaInput.style.display = e.target.value === 'custom' ? 'block' : 'none';
-      await saveSessions(); 
-    });
+    personaSelect.addEventListener('change', async (e) => { sessions[currentId].persona = e.target.value; customPersonaInput.style.display = e.target.value === 'custom' ? 'block' : 'none'; await saveSessions(); });
     customPersonaInput.addEventListener('input', async (e) => { sessions[currentId].customPrompt = e.target.value; await saveSessions(); });
-
     document.getElementById("newChatBtn").addEventListener("click", async () => { if(!generating) { await createNewSession(); closeMobileMenu(); } });
     document.getElementById("clearBtn").addEventListener("click", async () => {
       if(generating) return; delete sessions[currentId]; const keys = Object.keys(sessions);
@@ -673,10 +652,8 @@
 
     input.addEventListener('keydown', function(e) {
       if (e.key == 'Tab') {
-        e.preventDefault();
-        const start = this.selectionStart; const end = this.selectionEnd;
-        this.value = this.value.substring(0, start) + "  " + this.value.substring(end);
-        this.selectionStart = this.selectionEnd = start + 2;
+        e.preventDefault(); const start = this.selectionStart; const end = this.selectionEnd;
+        this.value = this.value.substring(0, start) + "  " + this.value.substring(end); this.selectionStart = this.selectionEnd = start + 2;
       }
       if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSendAction(); }
     });
@@ -684,35 +661,21 @@
     input.addEventListener("input", () => { input.style.height = "26px"; input.style.height = (input.scrollHeight) + "px"; sendBtn.disabled = input.value.trim() === "" || (!ready || generating); });
     sendBtn.addEventListener("click", handleSendAction);
 
-    // File Drag System Matrix
     document.body.addEventListener('dragover', (e) => { e.preventDefault(); if(!generating) document.body.classList.add('drag-active'); });
     document.body.addEventListener('dragleave', (e) => { if (e.relatedTarget === null) document.body.classList.remove('drag-active'); });
     document.body.addEventListener('drop', (e) => {
-      e.preventDefault(); document.body.classList.remove('drag-active');
-      if(generating || !ready || !e.dataTransfer.files[0]) return;
-      const reader = new FileReader(); 
-      reader.onload = (ev) => { 
-        const docText = ev.target.result.substring(0, 5000); 
-        input.value += (input.value ? "\n\n" : "") + `[Document Contents:\n${docText}\n]`; 
-        input.dispatchEvent(new Event('input')); 
-      };
+      e.preventDefault(); document.body.classList.remove('drag-active'); if(generating || !ready || !e.dataTransfer.files[0]) return;
+      const reader = new FileReader(); reader.onload = (ev) => { const docText = ev.target.result.substring(0, 5000); input.value += (input.value ? "\n\n" : "") + `[Document Contents:\n${docText}\n]`; input.dispatchEvent(new Event('input')); };
       reader.readAsText(e.dataTransfer.files[0]);
     });
 
-    // ---- Execution Initialization Kernel ----
     async function init() {
-      await initDatabase();
-      appendTelemetryLog("System verification pipeline armed.");
+      await initDatabase(); appendTelemetryLog("System verification pipeline armed.");
       if (!("gpu" in navigator)) { setStatus("HARDWARE ERROR", 0); appendTelemetryLog("WebGPU critical exception detected."); return addMsgToDOM("WebGPU is missing. Access via Chrome or Edge.", "bot error", -1); }
       try {
-        setStatus("LOADING 0%", 0);
-        appendTelemetryLog(`Initializing hardware profile: ${currentModelId.split('-')[0]}`);
-        engine = await webllm.CreateMLCEngine(currentModelId, { initProgressCallback: (p) => { 
-          setStatus(`LOADING ${Math.round((p.progress||0)*100)}%`, Math.round((p.progress||0)*100));
-          if(p.text) appendTelemetryLog(p.text);
-        }});
-        ready = true; setStatus("ONLINE", 100); input.disabled = false; input.focus();
-        appendTelemetryLog("Local compute matrix state: ONLINE.");
+        setStatus("LOADING 0%", 0); appendTelemetryLog(`Initializing hardware profile: ${currentModelId.split('-')[0]}`);
+        engine = await webllm.CreateMLCEngine(currentModelId, { initProgressCallback: (p) => { setStatus(`LOADING ${Math.round((p.progress||0)*100)}%`, Math.round((p.progress||0)*100)); if(p.text) appendTelemetryLog(p.text); }});
+        ready = true; setStatus("ONLINE", 100); input.disabled = false; input.focus(); appendTelemetryLog("Local compute matrix state: ONLINE.");
       } catch (error) { setStatus("OFFLINE", 0); appendTelemetryLog(`Core error initialization drop: ${error.message}`); addMsgToDOM("Engine failed to initialize. Ensure WebGPU is active.", "bot error", -1); }
     }
 
@@ -737,6 +700,10 @@
         if(index !== undefined && index !== -1) {
           const actionsDiv = document.createElement("div"); actionsDiv.className = "msg-actions";
           const branchBtn = document.createElement("button"); branchBtn.className = "edit-btn"; branchBtn.innerText = "⑂ Branch Chat"; branchBtn.onclick = () => window.branchSession(index);
+          
+          const readBtn = document.createElement("button"); readBtn.className = "edit-btn"; readBtn.innerText = "🔊 Read Aloud";
+          readBtn.onclick = () => window.readAloudText(readBtn, index); actionsDiv.appendChild(readBtn);
+
           if (index === sessions[currentId].messages.length - 1) {
               const retryBtn = document.createElement("button"); retryBtn.className = "edit-btn"; retryBtn.innerText = "↻ Retry"; retryBtn.onclick = () => window.retryMessage(index);
               actionsDiv.appendChild(retryBtn);
@@ -749,25 +716,17 @@
 
     async function sendMessage() {
       let text = input.value.trim(); if (!text || !ready) return;
-      generating = true; stopRequested = false;
-      input.value = ""; input.style.height = "26px"; input.disabled = true; 
-      sendBtn.innerHTML = "■"; sendBtn.classList.add("stop-mode");
+      generating = true; stopRequested = false; input.value = ""; input.style.height = "26px"; input.disabled = true; sendBtn.innerHTML = "■"; sendBtn.classList.add("stop-mode");
 
-      if (sessions[currentId].messages.length === 0) {
-        sessions[currentId].title = text.length > 25 ? text.substring(0, 25) + "..." : text; renderSessionList();
-      }
-
-      const userIndex = sessions[currentId].messages.length;
-      addMsgToDOM(text, "user", userIndex); 
+      if (sessions[currentId].messages.length === 0) { sessions[currentId].title = text.length > 25 ? text.substring(0, 25) + "..." : text; renderSessionList(); }
+      const userIndex = sessions[currentId].messages.length; addMsgToDOM(text, "user", userIndex); 
 
       let aiPrompt = text;
       if (text.startsWith("/fetch ")) {
         const url = text.split(" ")[1];
         if(url) {
-            const botDiv = addMsgToDOM("Fetching website data...", "bot", -1);
-            const siteContent = await fetchWebpage(url);
-            aiPrompt = `Read this website content:\n\n${siteContent}\n\nUser asked: Summarize or act on the above URL.`;
-            botDiv.remove();
+            const botDiv = addMsgToDOM("Fetching website data...", "bot", -1); const siteContent = await fetchWebpage(url);
+            aiPrompt = `Read this website content:\n\n${siteContent}\n\nUser asked: Summarize or act on the above URL.`; botDiv.remove();
         }
       }
 
@@ -775,36 +734,33 @@
       const botDiv = addMsgToDOM("Computing sequence...", "bot", -1);
       
       let systemPrompt = personas[sessions[currentId].persona] || personas.default;
-      if(sessions[currentId].persona === 'custom' && sessions[currentId].customPrompt) {
-        systemPrompt = sessions[currentId].customPrompt + " " + CREATOR_RULE;
-      }
+      if(sessions[currentId].persona === 'custom' && sessions[currentId].customPrompt) { systemPrompt = sessions[currentId].customPrompt + " " + CREATOR_RULE; }
       
       const chatMessages = [{ role: "system", content: systemPrompt }];
       sessions[currentId].messages.slice(-10).forEach(m => chatMessages.push({role: m.role, content: m.aiPrompt || m.content}));
       
-      const startTime = performance.now();
-      appendTelemetryLog(`Dispatching prompt payload to compute core.`);
+      const startTime = performance.now(); appendTelemetryLog(`Dispatching prompt payload to compute core.`);
 
       try {
-        let reply = "";
+        let reply = ""; const maxTokensSelection = parseInt(tokenLengthSelect.value) || 1024;
+        
         const chunks = await engine.chat.completions.create({ 
-          messages: chatMessages, 
-          stream: true, 
+          messages: chatMessages, stream: true, 
           temperature: sessions[currentId].persona === 'creative' ? 0.7 : 0.3,
-          max_tokens: 2048
+          max_tokens: maxTokensSelection
         });
         for await (const chunk of chunks) {
           if (stopRequested) break;
-          reply += chunk.choices[0]?.delta?.content || "";
-          botDiv.innerHTML = marked.parse(reply) || "Processing..."; scrollBottom();
+          reply += chunk.choices[0]?.delta?.content || ""; botDiv.innerHTML = marked.parse(reply) || "Processing...";
+          
+          // AUTO-SCROLL LOOK ANCHOR RUNTIME FOR LIVE TRACKING
+          chatbox.scrollTop = chatbox.scrollHeight;
         }
 
-        const endTime = performance.now();
-        const finalReply = reply.trim() || (stopRequested ? "Process interrupted." : "No output.");
+        const endTime = performance.now(); const finalReply = reply.trim() || (stopRequested ? "Process interrupted." : "No output.");
         botDiv.innerHTML = marked.parse(finalReply);
 
-        const timeSec = ((endTime - startTime) / 1000).toFixed(1);
-        const estimatedTokens = Math.round(finalReply.split(/\s+/).length * 1.3);
+        const timeSec = ((endTime - startTime) / 1000).toFixed(1); const estimatedTokens = Math.round(finalReply.split(/\s+/).length * 1.3);
         const statsStr = `${timeSec}s · ~${(estimatedTokens / timeSec).toFixed(1)} tokens/s`;
 
         const statDiv = document.createElement('div'); statDiv.className = 'generation-stats'; statDiv.innerText = statsStr;
