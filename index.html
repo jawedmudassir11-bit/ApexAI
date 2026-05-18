@@ -2,59 +2,111 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <!-- Added maximum-scale=1 to strictly prevent accidental double-tap zooming on mobile -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-  <title>ApexAI | Unified Workspace</title>
-  <meta name="description" content="ApexAI is a responsive, local browser AI assistant for coding, math, and analysis." />
+  <title>ApexAI | Intelligence Workspace</title>
+  <meta name="description" content="ApexAI is a high-performance local browser AI assistant for coding, math, and analysis." />
 
+  <!-- Code Highlight Styling for Code Snippets -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
 
   <style>
     :root {
       --bg-main: #0a0b0d;
-      --bg-surface: #111317;
+      --bg-sidebar: #111317;
       --bg-panel: #16191f;
       --accent-glow: #7c4dff;
       --accent-success: #00e676;
+      --accent-danger: #ff5252;
       --border-color: rgba(255, 255, 255, 0.08);
       --text-main: #f1f3f5;
       --text-muted: #98a2b3;
     }
 
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      height: 100vh;
-      display: flex;
-      flex-direction: row; /* Desktop Base Orientation */
-      color: var(--text-main);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: var(--bg-main);
+      height: 100dvh; /* Dynamic viewport prevents keyboard overlap */
       overflow: hidden;
+      display: flex;
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg-main);
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* ==========================================================================
-       DESKTOP VIEWPORT LAYOUT COMPONENTS (Base Rules)
-       ========================================================================== */
-    
+    /* Prevents iOS from zooming in on input focus */
+    input, textarea, select {
+      font-size: 16px !important;
+    }
+
+    /* Drag and Drop Overlay */
+    #dropOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 11, 13, 0.95);
+      z-index: 1000;
+      place-items: center;
+      color: var(--accent-glow);
+      font-size: 24px;
+      font-weight: 600;
+      border: 4px dashed var(--accent-glow);
+      pointer-events: none;
+    }
+    body.drag-active #dropOverlay {
+      display: grid;
+    }
+
+    /* Mobile Menu Dimming Overlay */
+    #mobileOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 90;
+      backdrop-filter: blur(2px);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    /* Mobile Header */
+    #mobileHeader {
+      display: none;
+      background: var(--bg-sidebar);
+      padding: 12px 20px;
+      padding-top: max(12px, env(safe-area-inset-top)); /* Notch support */
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+      z-index: 50;
+    }
+
+    #menuToggle {
+      background: transparent;
+      border: 1px solid var(--accent-glow);
+      color: var(--accent-glow);
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    /* Sidebar Layout */
     #sidebar {
       width: 280px;
       min-width: 280px;
       padding: 24px 20px;
-      background: var(--bg-surface);
+      background: var(--bg-sidebar);
       border-right: 1px solid var(--border-color);
       display: flex;
       flex-direction: column;
-      gap: 20px;
-    }
-
-    /* Mobile Top Header - Disabled by Default on Laptop Monitors */
-    #mobileHeader {
-      display: none;
+      gap: 16px;
+      z-index: 100;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .brand {
@@ -78,12 +130,7 @@
 
     h1, h2, p { margin: 0; }
     h1 { font-size: 18px; font-weight: 600; letter-spacing: -0.3px; }
-
-    .muted {
-      color: var(--text-muted);
-      font-size: 13px;
-      line-height: 1.5;
-    }
+    .muted { color: var(--text-muted); font-size: 13px; line-height: 1.5; }
 
     .panel {
       padding: 16px;
@@ -99,7 +146,7 @@
       margin-bottom: 12px;
     }
 
-    .status-label {
+    #status {
       color: var(--accent-success);
       font-size: 12px;
       font-weight: 600;
@@ -114,54 +161,101 @@
       background: rgba(255, 255, 255, 0.05);
     }
 
-    .progressBarInner {
+    #progressBar {
       width: 0%;
       height: 100%;
       background: var(--accent-glow);
       transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .session-clear-btn {
-      padding: 10px;
-      border-radius: 8px;
+    /* Sidebar Controls */
+    .sidebar-controls { display: flex; flex-direction: column; gap: 10px; }
+    
+    #personaSelect {
+      width: 100%;
+      padding: 12px 10px; /* Thicker for thumb taps */
+      background: var(--bg-panel);
       border: 1px solid var(--border-color);
       color: var(--text-main);
+      border-radius: 8px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    #newChatBtn {
+      background: var(--accent-glow);
+      color: #fff;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: opacity 0.2s;
+    }
+    #newChatBtn:hover { opacity: 0.9; }
+
+    #sessionList {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin: 4px 0;
+    }
+    
+    #sessionList::-webkit-scrollbar { width: 4px; }
+    #sessionList::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 2px; }
+
+    .session-item {
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      color: var(--text-muted);
+      background: transparent;
+      transition: background 0.2s, color 0.2s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .session-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
+    .session-item.active { 
+      background: rgba(124, 77, 255, 0.15); 
+      color: #fff; 
+      border: 1px solid rgba(124, 77, 255, 0.3); 
+    }
+
+    #clearBtn {
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 82, 82, 0.3);
+      color: var(--accent-danger);
       background: transparent;
       cursor: pointer;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 500;
-      transition: background 0.2s, border-color 0.2s;
+      transition: background 0.2s;
     }
+    #clearBtn:hover { background: rgba(255, 82, 82, 0.1); }
 
-    .session-clear-btn:hover {
-      background: rgba(255, 255, 255, 0.03);
-      border-color: rgba(255, 255, 255, 0.15);
-    }
-
-    /* Desktop Signature Badge Container placement */
-    .desktop-signature {
-      margin-top: auto;
-      padding-top: 16px;
+    .signature-badge {
+      padding-top: 14px;
       border-top: 1px solid rgba(255, 255, 255, 0.05);
       text-align: center;
+      padding-bottom: env(safe-area-inset-bottom);
     }
-    .signature-text {
-      font-size: 11px;
-      letter-spacing: 0.3px;
-      color: rgba(255, 255, 255, 0.3);
-    }
-    .signature-text strong {
-      color: rgba(255, 255, 255, 0.5);
-      font-weight: 500;
-    }
+    .signature-badge p { font-size: 11px; letter-spacing: 0.3px; color: rgba(255, 255, 255, 0.3); }
+    .signature-badge strong { color: rgba(255, 255, 255, 0.5); font-weight: 500; }
 
-    /* Main Frame Area Layouts */
+    /* Main Application Space */
     #main {
       flex: 1;
       min-width: 0;
       display: flex;
       flex-direction: column;
       background: var(--bg-main);
+      height: 100%;
     }
 
     #chatbox {
@@ -175,21 +269,18 @@
       gap: 24px;
       scroll-behavior: smooth;
     }
-
-    #chatbox::-webkit-scrollbar { width: 6px; }
-    #chatbox::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 3px; }
+    #chatbox::-webkit-scrollbar { width: 4px; }
+    #chatbox::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 2px; }
 
     .welcome {
       margin: auto;
-      width: 100%;
       max-width: 520px;
       text-align: center;
       display: grid;
       gap: 16px;
     }
-
     .welcome h2 {
-      font-size: 32px;
+      font-size: clamp(24px, 6vw, 32px); /* Scales for mobile */
       font-weight: 700;
       letter-spacing: -0.5px;
       background: linear-gradient(135deg, #fff 40%, var(--text-muted));
@@ -200,10 +291,9 @@
     .prompts {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
+      gap: 10px;
       margin-top: 12px;
     }
-
     .prompt {
       padding: 14px;
       border: 1px solid var(--border-color);
@@ -216,20 +306,13 @@
       transition: border-color 0.2s, background 0.2s;
     }
 
-    .prompt:hover {
-      border-color: rgba(124, 77, 255, 0.4);
-      background: rgba(124, 77, 255, 0.03);
-    }
-
-    /* Message Rendering Engine Layout Blocks */
     .msg {
-      max-width: min(88%, 740px);
+      max-width: min(92%, 740px);
       padding: 4px 0;
       overflow-wrap: anywhere;
       line-height: 1.6;
       font-size: 15px;
     }
-
     .user {
       align-self: flex-end;
       background: #1f222a;
@@ -237,43 +320,46 @@
       border-radius: 16px 16px 2px 16px;
       border: 1px solid var(--border-color);
     }
+    .bot { align-self: flex-start; width: 100%; }
+    .error { color: #ff5252; border-color: rgba(255, 82, 82, 0.2); background: rgba(255, 82, 82, 0.05); padding: 12px 16px; border-radius: 8px; }
 
-    .bot {
-      align-self: flex-start;
-      width: 100%;
+    /* Code Block Formatting */
+    .code-wrapper { position: relative; margin: 12px 0; }
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      z-index: 10;
     }
-
-    .error {
-      color: #ff5252;
-      border-color: rgba(255, 82, 82, 0.2);
-      background: rgba(255, 82, 82, 0.05);
-      padding: 12px 16px;
-      border-radius: 8px;
-    }
-
-    /* Code & Structural Element Hierarchies */
     .msg pre {
       background: #0d0e11;
       padding: 16px;
+      padding-top: 40px; /* Space for copy button */
       border-radius: 8px;
       overflow-x: auto;
       border: 1px solid var(--border-color);
-      margin: 12px 0;
+      margin: 0;
     }
     .msg code {
       font-family: "SFMono-Regular", Consolas, monospace;
       background: rgba(255, 255, 255, 0.06);
       padding: 2px 6px;
       border-radius: 4px;
-      font-size: 13.5px;
+      font-size: 14px;
     }
-    .msg pre code { background: transparent; padding: 0; font-size: 13px; }
-    .msg ul, .msg ol { margin: 8px 0; padding-left: 24px; }
-    .msg li { margin-bottom: 4px; }
+    .msg pre code { background: transparent; padding: 0; }
 
-    #inputArea {
-      padding: 0 24px 32px;
-      background: linear-gradient(transparent, var(--bg-main) 30%);
+    /* Action Deck Controls */
+    #inputArea { 
+      padding: 0 24px 32px; 
+      background: linear-gradient(transparent, var(--bg-main) 30%); 
     }
 
     .input-wrap {
@@ -281,181 +367,91 @@
       margin: 0 auto;
       padding: 10px 14px;
       border: 1px solid var(--border-color);
-      border-radius: 14px;
+      border-radius: 16px;
       display: flex;
       align-items: flex-end;
       gap: 12px;
-      background: var(--bg-surface);
-      transition: border-color 0.2s, box-shadow 0.2s;
+      background: var(--bg-sidebar);
     }
-
-    .input-wrap:focus-within {
-      border-color: rgba(124, 77, 255, 0.5);
-      box-shadow: 0 0 0 1px rgba(124, 77, 255, 0.2);
-    }
+    .input-wrap:focus-within { border-color: rgba(124, 77, 255, 0.5); box-shadow: 0 0 0 1px rgba(124, 77, 255, 0.2); }
 
     #userInput {
       flex: 1;
       min-width: 0;
       height: 26px;
-      max-height: 180px;
+      max-height: 150px; /* Shorter on mobile so it doesn't take the whole screen */
       border: 0;
       outline: 0;
       color: var(--text-main);
       background: transparent;
-      font-size: 15px;
       resize: none;
       font-family: inherit;
       line-height: 26px;
     }
-
     #userInput::placeholder { color: rgba(255, 255, 255, 0.25); }
 
     #sendBtn {
-      width: 28px;
-      height: 28px;
-      min-width: 28px;
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
       border: 0;
-      border-radius: 6px;
+      border-radius: 8px;
       color: #fff;
-      font-size: 12px;
+      font-size: 14px;
       cursor: pointer;
       background: var(--accent-glow);
       display: grid;
       place-items: center;
+      margin-bottom: -2px; /* Alignment fix */
     }
+    #sendBtn.stop-mode {
+      background: var(--accent-danger);
+      border-radius: 50%;
+    }
+    #sendBtn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-    #sendBtn:disabled, #userInput:disabled { opacity: 0.3; cursor: not-allowed; }
-
-    /* ==========================================================================
-       MOBILE RESPONSIVE COMPILING LAYER (Media Queries)
-       ========================================================================== */
-
+    /* Mobile Breakpoints */
     @media (max-width: 768px) {
-      body {
-        flex-direction: column; /* Stacks layout downward instead of sideways */
-      }
-
-      /* Hide Desktop Panel Component completely */
+      body { flex-direction: column; }
+      #mobileHeader { display: flex; }
+      
       #sidebar {
-        display: none;
+        position: fixed;
+        left: 0;
+        top: 0; /* Cover full height */
+        bottom: 0;
+        transform: translateX(-100%);
+        box-shadow: 10px 0 30px rgba(0,0,0,0.5);
       }
+      
+      #sidebar.open { transform: translateX(0); }
+      #mobileOverlay.open { display: block; opacity: 1; }
 
-      /* Enable Fixed Mobile Header Track */
-      #mobileHeader {
-        display: flex;
-        flex-direction: column;
-        background: var(--bg-surface);
-        border-bottom: 1px solid var(--border-color);
-        padding: 12px 16px;
-        gap: 10px;
-        z-index: 100;
-      }
+      #chatbox { padding: 20px 16px; }
+      .prompts { grid-template-columns: 1fr; }
+      .prompt { padding: 12px; }
 
-      .mobile-header-top {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-
-      .mobile-status-strip {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        background: rgba(255, 255, 255, 0.02);
-        padding: 6px 10px;
-        border-radius: 6px;
-        border: 1px solid var(--border-color);
-      }
-
-      .mobile-progress-wrapper {
-        width: 60px;
-        height: 3px;
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 2px;
-        overflow: hidden;
-      }
-
-      .mobile-status-detail {
-        font-size: 11px;
-        color: var(--text-muted);
-        max-width: 50%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-
-      /* Restyle Chat viewport limits for handheld tracking */
-      #chatbox {
-        padding: 16px 16px 24px;
-        gap: 16px;
-      }
-
-      .welcome {
-        margin: auto 0;
-      }
-
-      .welcome h2 {
-        font-size: 26px;
-      }
-
-      /* Convert regular grid block layout choices into smooth horizontal swipe chains */
-      .prompts {
-        display: flex;
-        overflow-x: auto;
-        gap: 8px;
-        margin-top: 16px;
-        padding-bottom: 4px;
-        width: 100%;
-        scroll-snap-type: x mandatory;
-      }
-      .prompts::-webkit-scrollbar { display: none; } /* Clear screen workspace lines */
-
-      .prompt {
-        flex: 0 0 auto;
-        width: 210px;
-        scroll-snap-align: start;
-        white-space: normal;
-        font-size: 12px;
-        padding: 12px;
-      }
-
-      .msg {
-        max-width: 92%;
-        font-size: 14px;
-      }
-
-      .user {
-        padding: 10px 14px;
-        border-radius: 14px 14px 2px 14px;
-      }
-
-      .msg pre { padding: 12px; margin: 8px 0; }
-      .msg code { font-size: 12.5px; }
-
-      /* Lock input array securely to mobile screen limits */
-      #inputArea {
-        padding: 8px 12px 16px 12px;
-        background: var(--bg-main);
-        border-top: 1px solid var(--border-color);
-      }
-
-      .input-wrap {
-        border-radius: 20px;
-        padding: 8px 12px;
-      }
-
-      #userInput {
-        font-size: 14px;
-        line-height: 20px;
-        height: 20px;
-        max-height: 100px;
+      /* Safe area inset prevents iPhone Home Bar overlap */
+      #inputArea { 
+        padding: 10px 16px calc(16px + env(safe-area-inset-bottom)); 
       }
     }
   </style>
 </head>
 
 <body>
+  <div id="dropOverlay">Drop file to read contents</div>
+  
+  <!-- The dark overlay that appears behind the mobile menu -->
+  <div id="mobileOverlay"></div>
+
+  <header id="mobileHeader">
+    <div class="brand">
+      <div class="logo" style="width: 28px; height: 28px; font-size: 14px;">A</div>
+      <h1 style="font-size: 16px;">ApexAI</h1>
+    </div>
+    <button id="menuToggle">Menu</button>
+  </header>
 
   <aside id="sidebar">
     <div class="brand">
@@ -468,65 +464,386 @@
 
     <div class="panel">
       <div class="status-container">
-        <div class="status-label d-status">INITIALIZING</div>
+        <div id="status">INITIALIZING</div>
       </div>
       <div class="progress">
-        <div class="progressBarInner d-progress"></div>
+        <div id="progressBar"></div>
       </div>
-      <p class="muted d-detail" style="margin-top:12px; font-size:12px;">Validating hardware context.</p>
     </div>
 
-    <div class="panel">
-      <p class="muted" style="font-size: 12px;">
-        Powered locally by WebLLM weights inside your browser sandbox. Privacy preserved natively.
-      </p>
+    <div class="sidebar-controls">
+      <button id="newChatBtn">＋ New Session</button>
+      <select id="personaSelect">
+        <option value="default">🧠 Analyst (Default)</option>
+        <option value="coder">💻 Developer Mode</option>
+        <option value="creative">🎨 Creative Mode</option>
+      </select>
     </div>
 
-    <button class="session-clear-btn">Clear Session</button>
+    <div id="sessionList"></div>
 
-    <div class="desktop-signature">
-      <p class="signature-text">Made by <strong>Mudassir Jawed</strong></p>
+    <button id="clearBtn">Delete Chat</button>
+
+    <div class="signature-badge">
+      <p>Made by <strong>Mudassir Jawed</strong></p>
     </div>
   </aside>
-
-  <header id="mobileHeader">
-    <div class="mobile-header-top">
-      <div class="brand">
-        <div class="logo" style="width:28px; height:28px; font-size:14px; border-radius:5px;">A</div>
-        <h1>ApexAI</h1>
-      </div>
-      <div>
-        <p class="signature-text">Made by <strong>Mudassir Jawed</strong></p>
-      </div>
-    </div>
-
-    <div class="mobile-status-strip">
-      <div style="display:flex; align-items:center; gap:8px;">
-        <span class="status-label m-status" style="font-size:10px; letter-spacing:0.3px;">INITIALIZING</span>
-        <div class="mobile-progress-wrapper">
-          <div class="progressBarInner m-progress"></div>
-        </div>
-      </div>
-      <p class="mobile-status-detail m-detail">Warming engine...</p>
-      <button class="session-clear-btn" style="padding:3px 8px; font-size:11px; border-radius:4px;">Clear</button>
-    </div>
-  </header>
 
   <main id="main">
     <section id="chatbox">
       <div class="welcome" id="welcome">
         <h2>Intelligent Workspace</h2>
-        <p class="muted">Run analysis, write calculations, or process complex code workflows completely on-device.</p>
+        <p class="muted">Run analysis, process files, or debug workflows completely on-device.</p>
 
         <div class="prompts">
-          <button class="prompt">Explain quadratic equations simply</button>
-          <button class="prompt">Help me debug this JavaScript</button>
-          <button class="prompt">Make a study plan for finals</button>
-          <button class="prompt">Write a Python function for prime numbers</button>
+          <button class="prompt">Review my code for errors</button>
+          <button class="prompt">Explain this error message</button>
+          <button class="prompt">Write a Python script for file sorting</button>
+          <button class="prompt">Optimize this algorithm</button>
         </div>
       </div>
     </section>
 
     <div id="inputArea">
       <div class="input-wrap">
-        <textarea id="userInput" placeholder="Type a message or paste code..." rows="1" disabled></textarea>
+        <textarea id="userInput" placeholder="Type or drop a file..." rows="1" disabled></textarea>
+        <button id="sendBtn" type="button" disabled>➤</button>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+  <script type="module">
+    import * as webllm from "https://esm.run/@mlc-ai/web-llm";
+
+    const modelId = "Llama-3.2-1B-Instruct-q4f16_1-MLC";
+
+    let engine = null;
+    let ready = false;
+    let generating = false;
+    let stopRequested = false;
+
+    const CREATOR_RULE = "If the user asks who made you, who created you, who your founder is, or who developed you, you must answer explicitly and concisely: 'Mudassir Jawed'. Do not mention OpenAI, MLC, WebLLM, or any other entities.";
+    const personas = {
+      default: "You are ApexAI, a professional and highly optimized analytical intelligence agent. Provide precise, mathematically and technically pristine solutions. " + CREATOR_RULE,
+      coder: "You are ApexAI, an expert software engineer and debugger. Focus entirely on producing clean, robust, and highly efficient code. " + CREATOR_RULE,
+      creative: "You are ApexAI, a creative and brainstorming assistant. Be expansive, imaginative, and conversational in your responses. " + CREATOR_RULE
+    };
+
+    const chatbox = document.getElementById("chatbox");
+    const welcome = document.getElementById("welcome");
+    const input = document.getElementById("userInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const clearBtn = document.getElementById("clearBtn");
+    const newChatBtn = document.getElementById("newChatBtn");
+    const personaSelect = document.getElementById("personaSelect");
+    const statusEl = document.getElementById("status");
+    const progressBar = document.getElementById("progressBar");
+    const sidebar = document.getElementById("sidebar");
+    const menuToggle = document.getElementById("menuToggle");
+    const mobileOverlay = document.getElementById("mobileOverlay");
+
+    let sessions = JSON.parse(localStorage.getItem('apexai-sessions')) || {};
+    let currentId = localStorage.getItem('apexai-current-id');
+
+    if (!currentId || !sessions[currentId]) createNewSession();
+
+    function createNewSession() {
+      currentId = Date.now().toString();
+      sessions[currentId] = { title: "New Chat", messages: [], persona: 'default' };
+      saveSessions();
+      loadSessionToUI();
+    }
+
+    function saveSessions() {
+      localStorage.setItem('apexai-sessions', JSON.stringify(sessions));
+      localStorage.setItem('apexai-current-id', currentId);
+      renderSessionList();
+    }
+
+    function switchSession(id) {
+      if (generating) return;
+      currentId = id;
+      localStorage.setItem('apexai-current-id', currentId);
+      loadSessionToUI();
+      renderSessionList();
+      closeMobileMenu();
+    }
+
+    function renderSessionList() {
+      const list = document.getElementById('sessionList');
+      list.innerHTML = '';
+      Object.entries(sessions).reverse().forEach(([id, session]) => {
+        const div = document.createElement('div');
+        div.className = `session-item ${id === currentId ? 'active' : ''}`;
+        div.innerText = session.title;
+        div.onclick = () => switchSession(id);
+        list.appendChild(div);
+      });
+    }
+
+    function loadSessionToUI() {
+      chatbox.innerHTML = '';
+      const currentSession = sessions[currentId];
+      personaSelect.value = currentSession.persona;
+
+      if (currentSession.messages.length === 0) {
+        chatbox.appendChild(welcome);
+      } else {
+        currentSession.messages.forEach(msg => addMsgToDOM(msg.content, msg.role === 'user' ? 'user' : 'bot'));
+      }
+      scrollBottom();
+    }
+
+    const renderer = new marked.Renderer();
+    const originalCode = renderer.code.bind(renderer);
+    renderer.code = function(code, language, isEscaped) {
+      const highlighted = originalCode(code, language, isEscaped);
+      return `<div class="code-wrapper"><button class="copy-btn">Copy</button>${highlighted}</div>`;
+    };
+    marked.setOptions({
+      renderer: renderer,
+      breaks: true,
+      highlight: function(code, lang) {
+        const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+        return hljs.highlight(code, { language }).value;
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (e.target.classList.contains('copy-btn')) {
+        const wrapper = e.target.closest('.code-wrapper');
+        const codeBlock = wrapper.querySelector('code');
+        navigator.clipboard.writeText(codeBlock.innerText);
+        e.target.innerText = "Copied!";
+        setTimeout(() => e.target.innerText = "Copy", 2000);
+      }
+    });
+
+    renderSessionList();
+    loadSessionToUI();
+    init();
+
+    personaSelect.addEventListener('change', (e) => {
+      sessions[currentId].persona = e.target.value;
+      saveSessions();
+    });
+
+    newChatBtn.addEventListener("click", () => {
+      if(generating) return;
+      createNewSession();
+      closeMobileMenu();
+    });
+
+    clearBtn.addEventListener("click", () => {
+      if(generating) return;
+      delete sessions[currentId];
+      const remainingIds = Object.keys(sessions);
+      if (remainingIds.length > 0) {
+        currentId = remainingIds[remainingIds.length - 1];
+      } else {
+        createNewSession();
+      }
+      saveSessions();
+      loadSessionToUI();
+      closeMobileMenu();
+    });
+
+    // Mobile Sidebar Drawer Logic
+    function toggleMobileMenu() {
+      sidebar.classList.toggle("open");
+      mobileOverlay.classList.toggle("open");
+    }
+
+    function closeMobileMenu() {
+      sidebar.classList.remove("open");
+      mobileOverlay.classList.remove("open");
+    }
+
+    menuToggle.addEventListener("click", toggleMobileMenu);
+    mobileOverlay.addEventListener("click", closeMobileMenu);
+    // Remove the chatbox touchstart listener, use the overlay instead
+
+    input.addEventListener("input", () => {
+      input.style.height = "26px";
+      input.style.height = (input.scrollHeight) + "px";
+      if(input.value.trim() === "") sendBtn.disabled = true;
+      else if (ready && !generating) sendBtn.disabled = false;
+    });
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        handleSendAction();
+      }
+    });
+
+    sendBtn.addEventListener("click", handleSendAction);
+
+    document.querySelectorAll(".prompt").forEach((button) => {
+      button.addEventListener("click", () => {
+        input.value = button.textContent.trim();
+        input.dispatchEvent(new Event('input'));
+        input.focus();
+      });
+    });
+
+    document.body.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      if(!generating) document.body.classList.add('drag-active');
+    });
+
+    document.body.addEventListener('dragleave', (e) => {
+      if (e.relatedTarget === null) document.body.classList.remove('drag-active');
+    });
+
+    document.body.addEventListener('drop', (e) => {
+      e.preventDefault();
+      document.body.classList.remove('drag-active');
+      if(generating || !ready) return;
+
+      const file = e.dataTransfer.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        input.value += (input.value ? "\n\n" : "") + ev.target.result;
+        input.dispatchEvent(new Event('input'));
+      };
+      reader.readAsText(file);
+    });
+
+    async function init() {
+      if (!("gpu" in navigator)) {
+        setStatus("HARDWARE ERROR", 0);
+        addMsgToDOM("WebGPU is missing. Please access via Chrome or Edge.", "bot error");
+        return;
+      }
+
+      try {
+        setStatus("LOADING 0%", 0);
+
+        engine = await webllm.CreateMLCEngine(modelId, {
+          initProgressCallback: (p) => {
+            const percent = Math.round((p.progress || 0) * 100);
+            setStatus(`LOADING ${percent}%`, percent);
+          }
+        });
+
+        ready = true;
+        setStatus("ONLINE", 100);
+        input.disabled = false;
+        input.focus();
+      } catch (error) {
+        console.error(error);
+        setStatus("OFFLINE", 0);
+        addMsgToDOM("ApexAI engine could not initialize. Ensure WebGPU compilation targets are active.", "bot error");
+      }
+    }
+
+    function handleSendAction() {
+      if (generating) {
+        stopRequested = true;
+        if (engine && typeof engine.interruptGenerate === 'function') {
+          engine.interruptGenerate();
+        }
+      } else {
+        sendMessage();
+      }
+    }
+
+    async function sendMessage() {
+      const text = input.value.trim();
+      if (!text || !ready) return;
+
+      generating = true;
+      stopRequested = false;
+      input.value = "";
+      input.style.height = "26px";
+      input.disabled = true; 
+      
+      sendBtn.innerHTML = "■";
+      sendBtn.classList.add("stop-mode");
+
+      if (sessions[currentId].messages.length === 0) {
+        sessions[currentId].title = text.length > 25 ? text.substring(0, 25) + "..." : text;
+        renderSessionList();
+      }
+
+      addMsgToDOM(text, "user");
+      sessions[currentId].messages.push({ role: "user", content: text });
+      saveSessions();
+
+      const botDiv = addMsgToDOM("Computing sequence...", "bot");
+
+      const systemPrompt = personas[sessions[currentId].persona] || personas.default;
+      const chatMessages = [
+        { role: "system", content: systemPrompt },
+        ...sessions[currentId].messages.slice(-12)
+      ];
+
+      try {
+        let reply = "";
+        const chunks = await engine.chat.completions.create({
+          messages: chatMessages,
+          stream: true,
+          temperature: sessions[currentId].persona === 'creative' ? 0.7 : 0.3
+        });
+
+        for await (const chunk of chunks) {
+          if (stopRequested) break;
+          
+          reply += chunk.choices[0]?.delta?.content || "";
+          botDiv.innerHTML = marked.parse(reply) || "Processing...";
+          scrollBottom();
+        }
+
+        const finalReply = reply.trim() || (stopRequested ? "Process interrupted by user." : "No return value received.");
+        botDiv.innerHTML = marked.parse(finalReply);
+
+        sessions[currentId].messages.push({ role: "assistant", content: finalReply });
+        saveSessions();
+      } catch (error) {
+        console.error(error);
+        botDiv.classList.add("error");
+        botDiv.textContent = "Execution loop interrupted unexpectedly. Re-submit query.";
+      } finally {
+        generating = false;
+        input.disabled = false;
+        sendBtn.innerHTML = "➤";
+        sendBtn.classList.remove("stop-mode");
+        input.focus();
+        scrollBottom();
+      }
+    }
+
+    function addMsgToDOM(text, cls) {
+      if (welcome.parentNode) welcome.parentNode.removeChild(welcome);
+
+      const div = document.createElement("div");
+      div.className = `msg ${cls}`;
+      
+      if(cls === "user") {
+        div.textContent = text;
+      } else {
+        div.innerHTML = marked.parse(text);
+      }
+
+      chatbox.appendChild(div);
+      scrollBottom();
+      return div;
+    }
+
+    function setStatus(label, percent) {
+      statusEl.textContent = label;
+      progressBar.style.width = `${percent}%`;
+    }
+
+    function scrollBottom() {
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+  </script>
+</body>
+</html>
