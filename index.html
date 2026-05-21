@@ -1,8 +1,30 @@
-<!-- ========================= -->
-<!-- APIEX AI ULTIMATE FEATURES -->
-<!-- Paste BEFORE </body> -->
-<!-- ========================= -->
+# APIEX AI Upgrade Integration Guide
 
+Paste the following sections into your EXISTING code.
+
+---
+
+# 1. CHANGE TITLE
+
+Find:
+
+```html
+<title>ApexAI | Intelligence Workspace</title>
+```
+
+Replace with:
+
+```html
+<title>APIEX AI | Ultimate Intelligence OS</title>
+```
+
+---
+
+# 2. ADD NEW LIBRARIES
+
+Paste BELOW your existing highlight.js import:
+
+```html
 <!-- Monaco Editor -->
 <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/loader.js"></script>
 
@@ -12,36 +34,65 @@
 
 <!-- Particles Background -->
 <script src="https://cdn.jsdelivr.net/npm/tsparticles@3/tsparticles.bundle.min.js"></script>
+```
 
-<!-- ========================= -->
-<!-- APIEX WINDOWS -->
-<!-- ========================= -->
+---
 
+# 3. ADD PARTICLES BACKGROUND
+
+Paste DIRECTLY after:
+
+```html
+<body>
+```
+
+Add:
+
+```html
+<div id="particles-js"></div>
+```
+
+---
+
+# 4. ADD APIEX WINDOWS
+
+Paste BEFORE:
+
+```html
+<main id="main">
+```
+
+Add:
+
+```html
+<!-- APIEX Dock -->
 <div id="desktopDock">
-  <button onclick="toggleWindow('terminalWindow')">💻</button>
   <button onclick="toggleWindow('editorWindow')">📝</button>
+  <button onclick="toggleWindow('terminalWindow')">💻</button>
   <button onclick="toggleWindow('memoryWindow')">🧠</button>
 </div>
 
-<!-- Monaco Editor Window -->
+<!-- Monaco Editor -->
 <div class="floatingWindow" id="editorWindow">
   <div class="windowHeader">
     <span>📝 APIEX Editor</span>
     <button onclick="toggleWindow('editorWindow')">✕</button>
   </div>
+
   <div id="monacoEditor"></div>
 </div>
 
-<!-- Terminal Window -->
+<!-- Terminal -->
 <div class="floatingWindow" id="terminalWindow">
   <div class="windowHeader">
     <span>💻 APIEX Terminal</span>
     <button onclick="toggleWindow('terminalWindow')">✕</button>
   </div>
+
   <div id="terminal"></div>
 </div>
 
-<!-- AI Memory Window -->
+<!-- Memory -->
 <div class="floatingWindow" id="memoryWindow">
   <div class="windowHeader">
     <span>🧠 AI Memory</span>
@@ -49,19 +100,39 @@
   </div>
 
   <div style="padding:15px;">
+
     <input id="memoryKey" placeholder="Memory Key">
+
     <textarea id="memoryValue" placeholder="Memory Value"></textarea>
-    <button onclick="saveMemory()">Save Memory</button>
+
+    <button onclick="saveMemory()">
+      Save Memory
+    </button>
 
     <div id="memoryList"></div>
+
   </div>
 </div>
+```
 
-<!-- ========================= -->
-<!-- STYLES -->
-<!-- ========================= -->
+---
 
-<style>
+# 5. ADD NEW CSS
+
+Paste BEFORE:
+
+```css
+</style>
+```
+
+Add:
+
+```css
+#particles-js{
+  position:fixed;
+  inset:0;
+  z-index:-1;
+}
 
 #desktopDock{
   position:fixed;
@@ -137,117 +208,62 @@
   padding:10px;
 }
 
-#memoryWindow input,
-#memoryWindow textarea{
-  width:100%;
-  margin-bottom:10px;
-  background:#1b1b1b;
-  color:white;
-  border:1px solid #333;
-  border-radius:10px;
-  padding:10px;
-}
-
-#memoryWindow button{
-  background:#7c4dff;
-  color:white;
-  border:none;
-  padding:10px;
-  border-radius:10px;
-  cursor:pointer;
-}
-
 .memoryItem{
   background:#1b1b1b;
   padding:10px;
   border-radius:10px;
   margin-top:10px;
 }
+```
 
-#particles-js{
-  position:fixed;
-  inset:0;
-  z-index:-1;
-}
+---
 
-</style>
+# 6. ADD JAVASCRIPT FEATURES
 
-<!-- ========================= -->
-<!-- PARTICLES BACKGROUND -->
-<!-- ========================= -->
+Paste BEFORE:
 
-<div id="particles-js"></div>
+```html
+</script>
+```
 
-<!-- ========================= -->
-<!-- APIEX JAVASCRIPT -->
-<!-- ========================= -->
+inside your EXISTING module script.
 
-<script>
+Add:
 
-document.title = "APIEX AI";
+```javascript
+/* ========================= */
+/* APIEX PARTICLES */
+/* ========================= */
 
-const particlesScript = () => {
-  tsParticles.load("particles-js", {
-    particles: {
-      number: { value: 80 },
-      links: {
-        enable: true,
-        distance: 150
-      },
-      move: {
-        enable: true,
-        speed: 2
-      },
-      size: {
-        value: 3
-      }
+tsParticles.load("particles-js", {
+  particles: {
+    number: {
+      value: 80
+    },
+    move: {
+      enable: true,
+      speed: 2
+    },
+    links: {
+      enable: true
     }
-  });
-};
+  }
+});
 
-particlesScript();
+/* ========================= */
+/* WINDOW TOGGLE */
+/* ========================= */
 
-function toggleWindow(id){
+window.toggleWindow = function(id){
+
   const el = document.getElementById(id);
 
-  if(el.style.display === "block"){
-    el.style.display = "none";
-  }else{
-    el.style.display = "block";
-  }
-}
+  el.style.display =
+    el.style.display === "block"
+    ? "none"
+    : "block";
 
-/* ========================= */
-/* DRAG WINDOWS */
-/* ========================= */
-
-document.querySelectorAll(".floatingWindow").forEach(win => {
-
-  const header = win.querySelector(".windowHeader");
-
-  let dragging = false;
-  let offsetX = 0;
-  let offsetY = 0;
-
-  header.addEventListener("mousedown", e => {
-    dragging = true;
-
-    offsetX = e.clientX - win.offsetLeft;
-    offsetY = e.clientY - win.offsetTop;
-  });
-
-  document.addEventListener("mousemove", e => {
-    if(!dragging) return;
-
-    win.style.left = e.clientX - offsetX + "px";
-    win.style.top = e.clientY - offsetY + "px";
-  });
-
-  document.addEventListener("mouseup", () => {
-    dragging = false;
-  });
-
-});
+};
 
 /* ========================= */
 /* MONACO EDITOR */
@@ -261,20 +277,18 @@ require.config({
 
 require(['vs/editor/editor.main'], function(){
 
-  window.monacoEditor = monaco.editor.create(
+  window.monacoEditor =
+  monaco.editor.create(
+
     document.getElementById('monacoEditor'),
+
     {
       value:
-`// Welcome to APIEX AI
-function hello(){
-  console.log("APIEX AI ONLINE");
-}`,
+`// APIEX AI\nconsole.log("APIEX AI ONLINE");`,
+
       language:'javascript',
       theme:'vs-dark',
-      automaticLayout:true,
-      minimap:{
-        enabled:true
-      }
+      automaticLayout:true
     }
   );
 
@@ -288,14 +302,15 @@ const term = new Terminal({
   cursorBlink:true
 });
 
-term.open(document.getElementById('terminal'));
+term.open(
+  document.getElementById('terminal')
+);
 
-term.writeln("⚡ APIEX AI TERMINAL");
-term.writeln("======================");
-term.writeln("Type commands below");
-term.write("$ ");
+term.writeln('⚡ APIEX TERMINAL');
+term.writeln('Type help');
+term.write('$ ');
 
-let commandBuffer = "";
+let commandBuffer = '';
 
 term.onData(e => {
 
@@ -303,7 +318,7 @@ term.onData(e => {
 
     handleTerminalCommand(commandBuffer);
 
-    commandBuffer = "";
+    commandBuffer = '';
 
     term.write("\r\n$ ");
 
@@ -329,20 +344,20 @@ term.onData(e => {
 
 function handleTerminalCommand(cmd){
 
-  if(cmd === "help"){
+  if(cmd === 'help'){
 
-    term.writeln("\r\nCommands:");
-    term.writeln("help");
-    term.writeln("clear");
-    term.writeln("about");
+    term.writeln('\r\nCommands:');
+    term.writeln('help');
+    term.writeln('clear');
+    term.writeln('about');
 
-  }else if(cmd === "clear"){
+  }else if(cmd === 'clear'){
 
     term.clear();
 
-  }else if(cmd === "about"){
+  }else if(cmd === 'about'){
 
-    term.writeln("\r\nAPIEX AI Ultimate Workspace");
+    term.writeln('\r\nAPIEX AI Ultimate Workspace');
 
   }else{
 
@@ -353,50 +368,53 @@ function handleTerminalCommand(cmd){
 }
 
 /* ========================= */
-/* MEMORY SYSTEM */
+/* MEMORY */
 /* ========================= */
 
-let aiMemory =
-  JSON.parse(localStorage.getItem("apiex-memory")) || {};
+window.aiMemory =
+JSON.parse(
+  localStorage.getItem('apiex-memory')
+) || {};
 
-function saveMemory(){
+window.saveMemory = function(){
 
   const key =
-    document.getElementById("memoryKey").value;
+    document.getElementById('memoryKey').value;
 
   const value =
-    document.getElementById("memoryValue").value;
+    document.getElementById('memoryValue').value;
 
   if(!key || !value) return;
 
   aiMemory[key] = value;
 
   localStorage.setItem(
-    "apiex-memory",
+    'apiex-memory',
     JSON.stringify(aiMemory)
   );
 
   renderMemory();
 
-}
+};
 
 function renderMemory(){
 
   const list =
-    document.getElementById("memoryList");
+    document.getElementById('memoryList');
 
-  list.innerHTML = "";
+  list.innerHTML = '';
 
-  Object.entries(aiMemory).forEach(([k,v]) => {
+  Object.entries(aiMemory)
+  .forEach(([k,v]) => {
 
-    const div = document.createElement("div");
+    const div =
+      document.createElement('div');
 
-    div.className = "memoryItem";
+    div.className =
+      'memoryItem';
 
-    div.innerHTML = `
-      <strong>${k}</strong>
-      <p>${v}</p>
-    `;
+    div.innerHTML =
+      `<strong>${k}</strong><p>${v}</p>`;
 
     list.appendChild(div);
 
@@ -407,73 +425,112 @@ function renderMemory(){
 renderMemory();
 
 /* ========================= */
-/* VOICE INPUT */
+/* DRAG WINDOWS */
 /* ========================= */
 
-const SpeechRecognition =
-window.SpeechRecognition ||
-window.webkitSpeechRecognition;
+document.querySelectorAll('.floatingWindow').forEach(win => {
 
-if(SpeechRecognition){
+  const header =
+    win.querySelector('.windowHeader');
 
-  const recognition =
-    new SpeechRecognition();
+  let dragging = false;
+  let offsetX = 0;
+  let offsetY = 0;
 
-  recognition.continuous = false;
+  header.addEventListener('mousedown', e => {
 
-  recognition.lang = "en-US";
+    dragging = true;
 
-  const micBtn =
-    document.getElementById("micBtn");
-
-  micBtn.addEventListener("click", () => {
-
-    recognition.start();
-
-    micBtn.innerHTML = "🔴";
+    offsetX = e.clientX - win.offsetLeft;
+    offsetY = e.clientY - win.offsetTop;
 
   });
 
-  recognition.onresult = e => {
+  document.addEventListener('mousemove', e => {
 
-    const text =
-      e.results[0][0].transcript;
+    if(!dragging) return;
 
-    document.getElementById(
-      "userInput"
-    ).value += text;
+    win.style.left =
+      e.clientX - offsetX + 'px';
 
-    micBtn.innerHTML = "🎤";
+    win.style.top =
+      e.clientY - offsetY + 'px';
 
-  };
+  });
 
-}
+  document.addEventListener('mouseup', () => {
+    dragging = false;
+  });
 
-/* ========================= */
-/* AI AUTO SAVE */
-/* ========================= */
+});
+```
 
-setInterval(() => {
+---
 
-  localStorage.setItem(
-    "apiex-editor-backup",
-    monacoEditor?.getValue?.() || ""
-  );
+# 7. CONNECT MEMORY TO AI
 
-}, 5000);
+Inside your EXISTING `sendMessage()` function.
 
-/* ========================= */
-/* PWA READY */
-/* ========================= */
+Find:
 
-if('serviceWorker' in navigator){
+```javascript
+const chatMessages = [
+```
 
-  navigator.serviceWorker.register(
-    'sw.js'
-  );
+BEFORE IT add:
 
-}
+```javascript
+const memoryContext =
+Object.entries(aiMemory)
+.map(([k,v]) => `${k}: ${v}`)
+.join("\n");
 
-console.log("⚡ APIEX AI FULLY LOADED");
+const editorCode =
+window.monacoEditor?.getValue?.() || "";
+```
 
-</script>
+---
+
+Then replace:
+
+```javascript
+const chatMessages = [
+  { role: "system", content: systemPrompt }
+];
+```
+
+WITH:
+
+```javascript
+const chatMessages = [
+  {
+    role: "system",
+    content:
+      systemPrompt +
+      "\n\nMEMORY:\n" +
+      memoryContext +
+      "\n\nEDITOR CODE:\n" +
+      editorCode
+  }
+];
+```
+
+---
+
+# FINAL RESULT
+
+After this integration your existing AI gains:
+
+* Monaco Editor
+* AI Memory
+* Terminal
+* Particles Background
+* Floating Windows
+* Dock System
+* AI Code Reading
+* Persistent Memory
+* APIEX Branding
+* Draggable Windows
+* Resizable Panels
+
+Your old AI engine remains fully intact.
