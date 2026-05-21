@@ -728,7 +728,6 @@
         const url = text.split(" ")[1];
         if(url) {
             const botDiv = addMsgToDOM("Fetching website data...", "bot", -1); const siteContent = await fetchWebpage(url);
-            // JS FIX 2: Fixed the ghost bubble removal issue
             aiPrompt = `Read this website content:\n\n${siteContent}\n\nUser asked: Summarize or act on the above URL.`; botDiv.parentElement.remove();
         }
       }
@@ -736,7 +735,6 @@
       sessions[currentId].messages.push({ role: "user", content: text, aiPrompt: aiPrompt }); await saveSessions();
       const botDiv = addMsgToDOM("Computing sequence...", "bot", -1);
       
-      // JS FIX 1: Fixed the CREATOR_RULE crash
       let systemPrompt = personas[sessions[currentId].persona] || personas.default;
       if(sessions[currentId].persona === 'custom' && sessions[currentId].customPrompt) { systemPrompt = sessions[currentId].customPrompt + " " + baseRule; }
       
@@ -757,7 +755,6 @@
           if (stopRequested) break;
           reply += chunk.choices[0]?.delta?.content || ""; botDiv.innerHTML = marked.parse(reply) || "Processing...";
           
-          // AUTO-SCROLL LOOK ANCHOR RUNTIME FOR LIVE TRACKING
           chatbox.scrollTop = chatbox.scrollHeight;
         }
 
