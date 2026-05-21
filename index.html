@@ -4,11 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-  <title>ApexAI | Premium Workspace</title>
+  <title>ApexAI | Intelligence Workspace</title>
   <meta name="description" content="ApexAI is a high-performance local browser AI assistant for coding, math, and analysis." />
 
-  <link id="syntaxTheme" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
 
   <style>
     :root {
@@ -21,331 +20,364 @@
       --border-color: rgba(255, 255, 255, 0.08);
       --text-main: #f1f3f5;
       --text-muted: #98a2b3;
-      --sidebar-width: 300px;
-      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      --glass-blur: 12px;
-      --ui-scale: 1;
     }
 
-    body.theme-light { --bg-main: #f8f9fa; --bg-sidebar: #ffffff; --bg-panel: #f1f3f5; --accent-glow: #6200ea; --border-color: rgba(0, 0, 0, 0.1); --text-main: #212529; --text-muted: #495057; }
-    body.theme-neon { --bg-main: #050014; --bg-sidebar: #0a0026; --bg-panel: #150030; --accent-glow: #ff00ff; --accent-success: #00ffff; --border-color: rgba(255, 0, 255, 0.3); --text-main: #ffffff; --text-muted: #00ffff; }
-    body.theme-vision { --bg-main: linear-gradient(135deg, #0f172a, #1e1b4b, #000000); --bg-sidebar: rgba(20, 20, 30, 0.35); --bg-panel: rgba(255, 255, 255, 0.04); --accent-glow: #3b82f6; --border-color: rgba(255, 255, 255, 0.12); --text-main: #f5f5f7; --text-muted: #a1a1a6; }
-    body.theme-obsidian { --bg-main: #0b0c10; --bg-sidebar: #121319; --bg-panel: #1a1c23; --accent-glow: #d4af37; --border-color: rgba(212, 175, 55, 0.2); --text-main: #f8f8f2; --text-muted: #a19d94; }
-    body.theme-sapphire { --bg-main: #040f1a; --bg-sidebar: #081b2e; --bg-panel: #0d2742; --accent-glow: #2196f3; --border-color: rgba(33, 150, 243, 0.3); --text-main: #e3f2fd; --text-muted: #90caf9; }
-    body.theme-amethyst { --bg-main: #140d1a; --bg-sidebar: #1d1426; --bg-panel: #2a1b38; --accent-glow: #b388ff; --border-color: rgba(179, 136, 255, 0.2); --text-main: #f3e5f5; --text-muted: #d1c4e9; }
-    body.theme-emerald { --bg-main: #08140c; --bg-sidebar: #0d2114; --bg-panel: #13331e; --accent-glow: #2ecc71; --border-color: rgba(46, 204, 113, 0.2); --text-main: #e8f5e9; --text-muted: #a5d6a7; }
-    body.theme-ruby { --bg-main: #1a0808; --bg-sidebar: #260d0d; --bg-panel: #3a1414; --accent-glow: #ff5252; --border-color: rgba(255, 82, 82, 0.2); --text-main: #ffebee; --text-muted: #ffcdd2; }
-    body.theme-copper { --bg-main: #140f0a; --bg-sidebar: #1f170f; --bg-panel: #2b2015; --accent-glow: #e67e22; --border-color: rgba(230, 126, 34, 0.2); --text-main: #fff3e0; --text-muted: #ffcc80; }
-    body.theme-space { --bg-main: #0b0914; --bg-sidebar: #131024; --bg-panel: #1d1838; --accent-glow: #f06292; --border-color: rgba(240, 98, 146, 0.2); --text-main: #fce4ec; --text-muted: #f48fb1; }
-    body.theme-platinum { --bg-main: #1a1a1c; --bg-sidebar: #232326; --bg-panel: #2d2d30; --accent-glow: #cfd8dc; --border-color: rgba(207, 216, 220, 0.3); --text-main: #eceff1; --text-muted: #b0bec5; }
-    body.theme-quartz { --bg-main: linear-gradient(to bottom right, #ece9e6, #fdf6e3); --bg-sidebar: rgba(253, 246, 227, 0.6); --bg-panel: rgba(255, 255, 255, 0.5); --accent-glow: #cb4b16; --border-color: rgba(203, 75, 22, 0.2); --text-main: #586e75; --text-muted: #93a1a1; }
+    /* Light Theme */
+    body.theme-light {
+      --bg-main: #f8f9fa;
+      --bg-sidebar: #ffffff;
+      --bg-panel: #f1f3f5;
+      --accent-glow: #6200ea;
+      --border-color: rgba(0, 0, 0, 0.1);
+      --text-main: #212529;
+      --text-muted: #495057;
+    }
 
-    body.font-system { --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body.font-serif { --font-family: "Georgia", "Playfair Display", "Times New Roman", serif; }
-    body.font-mono { --font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; }
+    /* Neon Theme */
+    body.theme-neon {
+      --bg-main: #050014;
+      --bg-sidebar: #0a0026;
+      --bg-panel: #150030;
+      --accent-glow: #ff00ff;
+      --accent-success: #00ffff;
+      --border-color: rgba(255, 0, 255, 0.3);
+      --text-main: #ffffff;
+      --text-muted: #00ffff;
+    }
+
+    /* Cyberpunk Crimson Theme */
+    body.theme-crimson {
+      --bg-main: #0c0809;
+      --bg-sidebar: #160f11;
+      --bg-panel: #221417;
+      --accent-glow: #ff2a5f;
+      --accent-success: #00ffaa;
+      --border-color: rgba(255, 42, 95, 0.25);
+      --text-main: #fceef1;
+      --text-muted: #a68f93;
+    }
+
+    /* Matrix Code Theme */
+    body.theme-matrix {
+      --bg-main: #000000;
+      --bg-sidebar: #050505;
+      --bg-panel: #0d0d0d;
+      --accent-glow: #00ff00;
+      --accent-success: #33ff33;
+      --accent-danger: #ff0000;
+      --border-color: rgba(0, 255, 0, 0.2);
+      --text-main: #00ff00;
+      --text-muted: #008800;
+    }
 
     * { box-sizing: border-box; }
-    body { margin: 0; height: 100dvh; overflow: hidden; display: flex; color: var(--text-main); font-family: var(--font-family); background: var(--bg-main); -webkit-font-smoothing: antialiased; transition: background 0.4s ease, color 0.4s ease; font-size: calc(15px * var(--ui-scale)); }
-    input, textarea, select, button { font-family: var(--font-family) !important; font-size: calc(14px * var(--ui-scale)) !important; }
 
-    .apex-custom-logo { width: 38px; height: 38px; display: inline-block; filter: drop-shadow(0 0 6px var(--accent-glow)); transition: filter 0.3s; }
-    .apex-custom-logo-big { width: 140px; height: 140px; filter: drop-shadow(0 0 16px var(--accent-glow)); margin-bottom: 12px; }
+    body {
+      margin: 0; height: 100dvh; overflow: hidden; display: flex;
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg-main); -webkit-font-smoothing: antialiased;
+      transition: background 0.3s, color 0.3s;
+    }
 
-    .glass-panel { background: var(--bg-panel); backdrop-filter: blur(var(--glass-blur)) saturate(150%); -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(150%); border: 1px solid var(--border-color); box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
-    #sidebar { background: var(--bg-sidebar); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); border-right: 1px solid var(--border-color); }
+    input, textarea, select { font-size: 16px !important; }
 
+    /* Custom Logo Styling */
+    .logo-img { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; box-shadow: 0 4px 14px rgba(var(--accent-glow), 0.3); }
+    .welcome-logo { width: 120px; height: 120px; border-radius: 24px; object-fit: cover; box-shadow: 0 8px 32px rgba(var(--accent-glow), 0.4); margin: 0 auto; }
+
+    /* Overlays */
     #dropOverlay { display: none; position: fixed; inset: 0; background: rgba(10, 11, 13, 0.95); z-index: 1000; place-items: center; color: var(--accent-glow); font-size: 24px; font-weight: 600; border: 4px dashed var(--accent-glow); pointer-events: none; }
     body.drag-active #dropOverlay { display: grid; }
     #mobileOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 90; opacity: 0; transition: opacity 0.3s; }
 
-    #sidebar { width: var(--sidebar-width); min-width: var(--sidebar-width); padding: 24px 20px; display: flex; flex-direction: column; gap: 16px; z-index: 100; overflow-y: auto; overflow-x: hidden; transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1), min-width 0.4s, padding 0.4s, opacity 0.4s; }
-    #sidebar.collapsed { width: 0px !important; min-width: 0px !important; padding: 0 !important; border: none; overflow: hidden; opacity: 0; }
-    #uiDragResizer { width: 4px; cursor: col-resize; background: transparent; z-index: 150; transition: background 0.2s; }
-    #uiDragResizer:hover { background: var(--accent-glow); }
-
-    body.zen-mode #sidebar { width: 0px !important; min-width: 0px !important; padding: 0 !important; border: none; opacity: 0; }
-    body.zen-mode #uiDragResizer { display: none; }
-    body.zen-mode .top-menu-actions-bar { opacity: 0.2; transition: opacity 0.3s; }
-    body.zen-mode .top-menu-actions-bar:hover { opacity: 1; }
-    body.zen-mode #inputArea { background: transparent; padding-bottom: 50px; }
-    body.zen-mode #chatbox { max-width: 900px; padding-top: 60px; font-size: 1.05em; }
+    /* Layout Elements & Collapsible Sidebar */
+    #sidebar { width: 280px; min-width: 280px; padding: 24px 20px; background: var(--bg-sidebar); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 16px; z-index: 100; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s, min-width 0.3s, padding 0.3s; }
+    #sidebar.collapsed { width: 80px; min-width: 80px; padding: 24px 10px; align-items: center; }
+    #sidebar.collapsed .brand h1, #sidebar.collapsed .brand p, #sidebar.collapsed .sidebar-controls, #sidebar.collapsed #chatSearch, #sidebar.collapsed #sessionList, #sidebar.collapsed .action-row, #sidebar.collapsed .signature-badge { display: none; }
+    
+    #collapseToggle { background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); border-radius: 6px; cursor: pointer; padding: 4px 8px; font-size: 12px; align-self: flex-end; }
+    #sidebar.collapsed #collapseToggle { align-self: center; }
 
     #mobileHeader { display: none; background: var(--bg-sidebar); padding: max(12px, env(safe-area-inset-top)) 20px 12px; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-color); z-index: 50; }
-    #menuToggle { background: transparent; border: 1px solid var(--accent-glow); color: var(--accent-glow); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+    #menuToggle { background: transparent; border: 1px solid var(--accent-glow); color: var(--accent-glow); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; }
 
-    .panel { padding: 16px; border-radius: 12px; cursor: pointer; width: 100%; transition: transform 0.2s, box-shadow 0.2s; }
-    .panel:hover { transform: translateY(-2px); }
+    /* Snippet Panel */
+    #snippetPanel { position: fixed; right: -320px; top: 0; bottom: 0; width: 320px; background: var(--bg-sidebar); border-left: 1px solid var(--border-color); z-index: 200; padding: 24px 20px; display: flex; flex-direction: column; gap: 16px; transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: -10px 0 30px rgba(0,0,0,0.5); }
+    #snippetPanel.open { right: 0; }
+    .snippet-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+    .snippet-card { background: var(--bg-panel); border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; cursor: pointer; transition: border-color 0.2s; }
+    .snippet-card:hover { border-color: var(--accent-glow); }
+    .snippet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .snippet-title { font-weight: 600; font-size: 13px; color: var(--text-main); }
+    .snippet-del { color: var(--accent-danger); cursor: pointer; font-size: 12px; background: none; border: none; padding: 0; }
+    .snippet-code { font-family: monospace; font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* Status Panel */
+    .panel { padding: 16px; border: 1px solid var(--border-color); border-radius: 10px; background: var(--bg-panel); cursor: pointer; position: relative; width: 100%; }
     .status-container { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-    #status { color: var(--accent-success); font-size: calc(12px * var(--ui-scale)); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+    #status { color: var(--accent-success); font-size: 12px; font-weight: 600; text-transform: uppercase; }
     .progress { height: 4px; overflow: hidden; border-radius: 2px; background: rgba(128, 128, 128, 0.2); }
     #progressBar { width: 0%; height: 100%; background: var(--accent-glow); transition: width 0.3s; }
-    
-    .sidebar-controls { display: flex; flex-direction: column; gap: 8px; width: 100%; }
-    .custom-select { width: 100%; padding: 10px; background: var(--bg-panel); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; cursor: pointer; transition: border-color 0.2s; }
-    .custom-select:focus { border-color: var(--accent-glow); outline: none; }
-    .btn-primary { background: var(--accent-glow); color: #fff; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: filter 0.2s, transform 0.1s; width: 100%; }
-    .btn-primary:active { transform: scale(0.98); }
-    .btn-primary:hover { filter: brightness(1.2); }
-    .btn-secondary { background: transparent; color: var(--text-main); border: 1px solid var(--border-color); padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 500; transition: background 0.2s; }
-    .btn-secondary:hover { background: rgba(128,128,128,0.1); }
-    .btn-danger { background: rgba(255, 82, 82, 0.1); color: var(--accent-danger); border: 1px solid var(--accent-danger); padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 600; text-align: center; width: 100%; transition: 0.2s; }
-    .btn-danger:hover { background: var(--accent-danger); color: #fff; }
-    optgroup { background: var(--bg-sidebar); color: var(--text-muted); font-weight: 600; }
-    
-    .setting-label { font-size: calc(11px * var(--ui-scale)); color: var(--text-muted); font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; margin-bottom: -4px; }
+    #debugTray { display: none; font-family: monospace; font-size: 11px; color: var(--text-muted); margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-color); max-height: 100px; overflow-y: auto; }
 
-    #sessionList { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; margin: 4px 0; width: 100%; min-height: 100px; }
+    /* Live Preview Modal */
+    #previewModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 300; padding: 40px; }
+    #previewModal.open { display: flex; flex-direction: column; }
+    .preview-header { display: flex; justify-content: space-between; background: var(--bg-sidebar); padding: 12px 20px; border-radius: 12px 12px 0 0; border: 1px solid var(--border-color); border-bottom: none; }
+    #closePreview { background: var(--accent-danger); border: none; color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
+    #previewFrame { flex: 1; width: 100%; background: white; border: none; border-radius: 0 0 12px 12px; }
+
+    /* Command Palette Shortcuts Menu */
+    #commandPalette { display: none; position: fixed; top: 25%; left: 50%; transform: translate(-50%, 0); width: min(90%, 500px); background: var(--bg-sidebar); border: 1px solid var(--accent-glow); border-radius: 14px; box-shadow: 0 20px 60px rgba(0,0,0,0.7); z-index: 500; padding: 20px; }
+    #commandPalette.open { display: block; }
+    .palette-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; display: flex; justify-content: space-between; color: var(--accent-glow); }
+    .palette-item { padding: 10px 14px; border-radius: 8px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-bottom: 4px; background: rgba(255,255,255,0.02); }
+    .palette-item:hover { background: var(--accent-glow); color: white; }
+    .palette-kbd { background: rgba(128,128,128,0.2); padding: 2px 6px; border-radius: 4px; font-size: 11px; font-family: monospace; }
+
+    /* Controls */
+    .sidebar-controls { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+    .custom-select { width: 100%; padding: 10px; background: var(--bg-panel); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; cursor: pointer; font-size: 13px; }
+    #customPersonaInput { width: 100%; padding: 10px; background: var(--bg-panel); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; font-size: 13px; resize: vertical; min-height: 60px; display: none; }
+    .btn-primary { background: var(--accent-glow); color: #fff; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; transition: opacity 0.2s; width: 100%; }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-secondary { background: transparent; color: var(--text-main); border: 1px solid var(--border-color); padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 500; font-size: 13px; transition: background 0.2s; }
+    .btn-secondary:hover { background: rgba(128,128,128,0.1); }
+    optgroup { background: var(--bg-sidebar); color: var(--text-muted); font-weight: 600; }
+
+    /* Sessions & Rename Engine */
+    #sessionList { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; margin: 4px 0; width: 100%; }
     #sessionList::-webkit-scrollbar { width: 4px; }
     #sessionList::-webkit-scrollbar-thumb { background: rgba(128, 128, 128, 0.2); border-radius: 2px; }
-    .session-item { padding: 12px; border-radius: 8px; cursor: pointer; color: var(--text-muted); transition: all 0.2s ease; display: flex; justify-content: space-between; align-items: center; border: 1px solid transparent; }
-    .session-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 85%; font-weight: 500; font-size: 14px; }
-    .session-rename-btn { opacity: 0; font-size: 12px; cursor: pointer; padding: 2px 6px; color: var(--text-muted); background: transparent; border: none; transition: opacity 0.2s, color 0.2s; }
+    .session-item { padding: 12px; border-radius: 6px; font-size: 14px; cursor: pointer; color: var(--text-muted); transition: background 0.2s, color 0.2s; display: flex; justify-content: space-between; align-items: center; position: relative; }
+    .session-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 85%; }
+    .session-rename-btn { opacity: 0; font-size: 12px; cursor: pointer; padding: 2px 4px; color: var(--text-muted); background: transparent; border: none; transition: opacity 0.2s; }
     .session-item:hover .session-rename-btn { opacity: 1; }
     .session-rename-btn:hover { color: var(--text-main); }
-    .session-item:hover { background: var(--bg-panel); color: var(--text-main); border-color: rgba(255,255,255,0.05); }
-    .session-item.active { background: rgba(124, 77, 255, 0.15); color: var(--text-main); border-color: rgba(124, 77, 255, 0.3); }
+    .session-item:hover { background: rgba(128,128,128,0.1); color: var(--text-main); }
+    .session-item.active { background: rgba(124, 77, 255, 0.15); color: var(--text-main); border: 1px solid rgba(124, 77, 255, 0.3); }
 
     .action-row { display: flex; gap: 8px; width: 100%; }
     .action-row button { flex: 1; }
+    #clearBtn { border-color: rgba(255, 82, 82, 0.3); color: var(--accent-danger); }
+    #clearBtn:hover { background: rgba(255, 82, 82, 0.1); }
 
     .signature-badge { padding-top: 14px; border-top: 1px solid rgba(128, 128, 128, 0.2); text-align: center; padding-bottom: env(safe-area-inset-bottom); width: 100%; }
-    .signature-badge p { font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; }
+    .signature-badge p { font-size: 11px; color: var(--text-muted); }
 
-    #main { flex: 1; min-width: 0; display: flex; flex-direction: column; background: var(--bg-main); height: 100%; position: relative; }
-    
-    .top-menu-actions-bar { position: absolute; top: 20px; right: 20px; z-index: 40; display: flex; gap: 8px; transition: opacity 0.3s; }
-    .action-nav-btn { padding: 8px 14px; border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-main); cursor: pointer; font-weight: 500; transition: background 0.2s, color 0.2s, transform 0.1s; }
-    .action-nav-btn:hover { background: var(--accent-glow); color: white; border-color: var(--accent-glow); }
+    /* Main Chat Space */
+    #main { flex: 1; min-width: 0; display: flex; flex-direction: column; background: var(--bg-main); height: 100%; position: relative; transition: background 0.3s; }
+    #openSnippetsBtn { position: absolute; top: 20px; right: 20px; z-index: 40; padding: 8px 12px; background: var(--bg-sidebar); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-main); cursor: pointer; font-size: 13px; }
 
-    #chatbox { flex: 1; width: min(100%, 840px); margin: 0 auto; padding: 32px 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; scroll-behavior: smooth; transition: max-width 0.4s ease; }
+    #chatbox { flex: 1; width: min(100%, 840px); margin: 0 auto; padding: 32px 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 24px; scroll-behavior: smooth; position: relative; }
     #chatbox::-webkit-scrollbar { width: 4px; }
     #chatbox::-webkit-scrollbar-thumb { background: rgba(128, 128, 128, 0.2); border-radius: 2px; }
 
-    #scrollToBottomBtn { display: none; position: fixed; bottom: 160px; right: calc(50% - 400px); z-index: 80; background: var(--bg-panel); border: 1px solid var(--border-color); color: var(--text-main); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(0,0,0,0.4); backdrop-filter: blur(10px); transition: transform 0.2s; }
+    /* Floating Scroll Action Button */
+    #scrollToBottomBtn { display: none; position: fixed; bottom: 160px; right: calc(50% - 400px); z-index: 80; background: var(--bg-panel); border: 1px solid var(--border-color); color: var(--text-main); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 16px; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.5); transition: opacity 0.2s; }
     @media (max-width: 900px) { #scrollToBottomBtn { right: 24px; } }
 
-    .welcome { margin: auto; max-width: 520px; text-align: center; display: grid; gap: 16px; animation: fadeIn 0.8s ease; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .welcome { margin: auto; max-width: 520px; text-align: center; display: grid; gap: 16px; }
     .welcome h2 { font-size: clamp(24px, 6vw, 32px); font-weight: 700; letter-spacing: -0.5px; }
     .prompts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 12px; }
-    .prompt { padding: 14px; border: 1px solid var(--border-color); border-radius: 12px; color: var(--text-main); cursor: pointer; text-align: left; transition: border-color 0.2s, background 0.2s, transform 0.1s; }
-    .prompt:hover { border-color: var(--accent-glow); background: rgba(124, 77, 255, 0.05); transform: translateY(-2px); }
+    .prompt { padding: 14px; border: 1px solid var(--border-color); border-radius: 10px; color: var(--text-main); background: var(--bg-panel); cursor: pointer; text-align: left; font-size: 13px; transition: border-color 0.2s, background 0.2s; }
 
-    .msg-container { display: flex; flex-direction: column; max-width: min(92%, 780px); width: fit-content; animation: slideUp 0.3s ease-out forwards; }
-    @keyframes slideUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    /* Messages */
+    .msg-container { display: flex; flex-direction: column; max-width: min(92%, 740px); width: fit-content; }
     .msg-container.user { align-self: flex-end; }
     .msg-container.bot { align-self: flex-start; width: 100%; }
-    .user .msg { background: var(--bg-panel); padding: 14px 20px; border-radius: 20px 20px 4px 20px; border: 1px solid var(--border-color); font-weight: 400; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-    .msg { padding: 4px 0; overflow-wrap: anywhere; line-height: 1.6; }
-    
-    .msg-timestamp { font-size: calc(10px * var(--ui-scale)); color: var(--text-muted); margin-bottom: 4px; align-self: flex-start; opacity: 0.7; }
-    .user .msg-timestamp { align-self: flex-end; }
 
-    .error { color: #ff5252; border-color: rgba(255, 82, 82, 0.3); background: rgba(255, 82, 82, 0.1); padding: 14px 20px; border-radius: 12px; }
+    .msg { padding: 4px 0; overflow-wrap: anywhere; line-height: 1.6; font-size: 15px; }
+    .user .msg { background: var(--bg-panel); padding: 12px 18px; border-radius: 16px 16px 2px 16px; border: 1px solid var(--border-color); }
+    .error { color: #ff5252; border-color: rgba(255, 82, 82, 0.2); background: rgba(255, 82, 82, 0.05); padding: 12px 16px; border-radius: 8px; }
 
-    .msg-actions { align-self: flex-end; display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
-    .edit-btn { background: transparent; border: none; color: var(--text-muted); font-size: 12px; font-weight: 500; cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: background 0.2s, color 0.2s; }
-    .edit-btn:hover { background: rgba(128,128,128,0.1); color: var(--accent-glow); }
-    .generation-stats { font-size: calc(11px * var(--ui-scale)); color: var(--text-muted); margin-top: 8px; font-family: monospace; letter-spacing: 0.5px; }
+    .msg-actions { align-self: flex-end; display: flex; gap: 8px; margin-top: 4px; }
+    .edit-btn { background: transparent; border: none; color: var(--text-muted); font-size: 12px; cursor: pointer; transition: color 0.2s; }
+    .edit-btn:hover { color: var(--accent-glow); }
+    .generation-stats { font-size: 11px; color: var(--text-muted); margin-top: 6px; font-family: monospace; }
 
-    .code-wrapper { position: relative; margin: 16px 0; }
+    /* Code Blocks */
+    .code-wrapper { position: relative; margin: 12px 0; }
     .code-actions { position: absolute; top: 8px; right: 8px; display: flex; gap: 6px; z-index: 10; }
-    .code-btn { background: rgba(128,128,128,0.3); border: 1px solid rgba(255,255,255,0.1); color: var(--text-main); padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; backdrop-filter: blur(4px); transition: background 0.2s; }
-    .code-btn:hover { background: rgba(128,128,128,0.6); }
-    .msg pre { background: #050505; padding: 16px; padding-top: 48px; border-radius: 12px; overflow-x: auto; border: 1px solid var(--border-color); margin: 0; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); }
-    .msg code { font-family: "SFMono-Regular", Consolas, monospace; background: rgba(128, 128, 128, 0.15); padding: 2px 6px; border-radius: 4px; }
+    .code-btn { background: rgba(128,128,128,0.2); border: 1px solid rgba(128,128,128,0.3); color: var(--text-main); padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; }
+    .code-btn:hover { background: rgba(128,128,128,0.4); }
+    .preview-btn { background: rgba(124, 77, 255, 0.2); border-color: rgba(124, 77, 255, 0.4); color: var(--text-main); }
+    
+    .msg pre { background: var(--bg-panel); padding: 16px; padding-top: 44px; border-radius: 8px; overflow-x: auto; border: 1px solid var(--border-color); margin: 0; }
+    .msg code { font-family: "SFMono-Regular", Consolas, monospace; background: rgba(128, 128, 128, 0.1); padding: 2px 6px; border-radius: 4px; font-size: 14px; }
     .msg pre code { background: transparent; padding: 0; }
 
-    .editor-toolbar { width: min(100%, 800px); margin: 0 auto; display: flex; gap: 6px; padding: 6px 12px; border: 1px solid var(--border-color); border-bottom: none; border-radius: 16px 16px 0 0; overflow-x: auto; transition: opacity 0.3s; }
-    .toolbar-btn { background: transparent; border: none; color: var(--text-muted); padding: 6px 10px; font-weight: 600; cursor: pointer; border-radius: 6px; transition: background 0.2s, color 0.2s; }
-    .toolbar-btn:hover { background: rgba(128,128,128,0.15); color: var(--text-main); }
+    /* Markdown Editor Toolbar Styling */
+    .editor-toolbar { width: min(100%, 800px); margin: 0 auto; display: flex; gap: 6px; padding: 4px 8px; background: var(--bg-panel); border: 1px solid var(--border-color); border-bottom: none; border-radius: 12px 12px 0 0; overflow-x: auto; }
+    .toolbar-btn { background: transparent; border: none; color: var(--text-muted); padding: 4px 8px; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 4px; }
+    .toolbar-btn:hover { background: rgba(128,128,128,0.1); color: var(--text-main); }
 
-    #inputArea { padding: 0 24px 16px; background: linear-gradient(transparent, var(--bg-main) 30%); position: relative; transition: background 0.3s, padding 0.3s; }
-    .input-wrap { width: min(100%, 800px); margin: 0 auto; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 0 0 20px 20px; display: flex; align-items: flex-end; gap: 12px; transition: border-color 0.2s, box-shadow 0.2s; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
-    .input-wrap:focus-within { border-color: rgba(124, 77, 255, 0.6); box-shadow: 0 8px 32px rgba(124, 77, 255, 0.2); }
-    #userInput { flex: 1; min-width: 0; height: 26px; max-height: 200px; border: 0; outline: 0; color: var(--text-main); background: transparent; resize: none; line-height: 26px; }
-    #userInput::placeholder { color: var(--text-muted); opacity: 0.7; }
-    
-    #typingAnalytics { width: min(100%, 800px); margin: 4px auto 0; text-align: right; font-size: calc(10px * var(--ui-scale)); color: var(--text-muted); font-family: monospace; }
+    /* Input Area Container */
+    #inputArea { padding: 0 24px 32px; background: linear-gradient(transparent, var(--bg-main) 30%); }
+    .input-wrap { width: min(100%, 800px); margin: 0 auto; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 0 0 16px 16px; display: flex; align-items: flex-end; gap: 12px; background: var(--bg-sidebar); }
+    .input-wrap:focus-within { border-color: rgba(124, 77, 255, 0.5); box-shadow: 0 0 0 1px rgba(124, 77, 255, 0.2); }
 
-    .action-icon-btn { width: 36px; height: 36px; border: none; border-radius: 10px; background: transparent; color: var(--text-muted); cursor: pointer; display: grid; place-items: center; transition: color 0.2s, background 0.2s, transform 0.1s; }
-    .action-icon-btn:hover { color: var(--text-main); background: rgba(128,128,128,0.15); }
-    .action-icon-btn:active { transform: scale(0.9); }
+    #userInput { flex: 1; min-width: 0; height: 26px; max-height: 150px; border: 0; outline: 0; color: var(--text-main); background: transparent; resize: none; font-family: inherit; line-height: 26px; }
+    #userInput::placeholder { color: var(--text-muted); }
 
-    #sendBtn { width: 36px; height: 36px; min-width: 36px; border: 0; border-radius: 10px; color: #fff; cursor: pointer; background: var(--accent-glow); display: grid; place-items: center; margin-bottom: -2px; transition: filter 0.2s, transform 0.1s, background 0.3s; box-shadow: 0 4px 12px rgba(var(--accent-glow), 0.3); }
-    #sendBtn:hover { filter: brightness(1.1); transform: translateY(-1px); }
-    #sendBtn:active { transform: translateY(1px) scale(0.95); }
-    #sendBtn.stop-mode { background: var(--accent-danger); border-radius: 8px; box-shadow: 0 4px 12px rgba(255, 82, 82, 0.5); content: "STOP"; font-weight: bold; }
-    #sendBtn:disabled { opacity: 0.3; cursor: not-allowed; box-shadow: none; filter: none; transform: none; }
+    .action-icon-btn { width: 32px; height: 32px; border: none; border-radius: 8px; background: transparent; color: var(--text-muted); cursor: pointer; display: grid; place-items: center; font-size: 16px; transition: color 0.2s, background 0.2s; }
+    .action-icon-btn:hover { color: var(--text-main); background: rgba(128,128,128,0.1); }
+    .action-icon-btn.listening { color: var(--accent-danger); animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
-    @media print {
-      #sidebar, #uiDragResizer, .top-menu-actions-bar, #inputArea, .msg-actions, .code-actions { display: none !important; }
-      body, #main, #chatbox { background: white !important; color: black !important; height: auto !important; overflow: visible !important; }
-      .msg-container { max-width: 100% !important; margin-bottom: 20px; page-break-inside: avoid; }
-      .user .msg { background: #f0f0f0 !important; color: black !important; border: 1px solid #ccc !important; }
-      .bot .msg { color: black !important; }
-      pre { background: #f8f8f8 !important; color: #333 !important; border: 1px solid #ddd !important; }
-      .welcome { display: none !important; }
-    }
-
-    @media (max-width: 768px) {
-      body { flex-direction: column; } #mobileHeader { display: flex; }
-      #sidebar { position: fixed; left: 0; top: 0; bottom: 0; transform: translateX(-100%); box-shadow: 10px 0 40px rgba(0,0,0,0.6); width: 280px !important; }
-      #sidebar.open { transform: translateX(0); } #mobileOverlay.open { display: block; opacity: 1; }
-      .top-menu-actions-bar { display: none; }
-      #chatbox { padding: 20px 16px; } .prompts { grid-template-columns: 1fr; } 
-      #inputArea { padding: 10px 12px calc(16px + env(safe-area-inset-bottom)); }
-      #uiDragResizer { display: none; }
-    }
+    #sendBtn { width: 32px; height: 32px; min-width: 32px; border: 0; border-radius: 8px; color: #fff; font-size: 14px; cursor: pointer; background: var(--accent-glow); display: grid; place-items: center; margin-bottom: -2px; transition: background 0.2s; }
+    #sendBtn.stop-mode { background: var(--accent-danger); border-radius: 50%; }
+    #sendBtn:disabled { opacity: 0.3; cursor: not-allowed; }
   </style>
 </head>
 
 <body>
-  <div id="dropOverlay">Drop file to unpack context</div>
+  <div id="dropOverlay">Drop file to read contents</div>
   <div id="mobileOverlay"></div>
+
+  <div id="previewModal">
+    <div class="preview-header">
+      <h3 style="margin:0; font-size:16px;">Live HTML Preview</h3>
+      <button id="closePreview">Close</button>
+    </div>
+    <iframe id="previewFrame" sandbox="allow-scripts"></iframe>
+  </div>
+
+  <div id="commandPalette">
+    <div class="palette-title">
+      <span>Command HUD Menu</span>
+      <span class="palette-kbd">ESC to Close</span>
+    </div>
+    <div class="palette-item" onclick="document.getElementById('newChatBtn').click(); document.getElementById('commandPalette').classList.remove('open');">
+      <span>＋ Start New Session</span> <span class="palette-kbd">Action</span>
+    </div>
+    <div class="palette-item" onclick="document.getElementById('openSnippetsBtn').click(); document.getElementById('commandPalette').classList.remove('open');">
+      <span>‹ Open Snippet Panel</span> <span class="palette-kbd">Library</span>
+    </div>
+    <div class="palette-item" id="hudToggleTheme">
+      <span>⚡ Swap Global Theme Scheme</span> <span class="palette-kbd">Switch</span>
+    </div>
+  </div>
 
   <header id="mobileHeader">
     <div class="brand">
-      <svg class="apex-custom-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <rect width="100" height="100" rx="24" fill="#090514" stroke="var(--accent-glow)" stroke-width="1.5"/>
-        <g fill="none" stroke="var(--accent-glow)" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
-          <path d="M50 15 L20 75 L35 75 L45 55 L38 55 L50 30 L62 55 L55 55 L65 75 L80 75 Z"/>
-          <path d="M42 65 L58 65 L50 45 Z" stroke-width="2"/>
-        </g>
-      </svg>
-      <h1 style="font-size: 16px; margin-left: 8px;">ApexAI</h1>
+      <img src="logo.png" class="logo-img" alt="ApexAI Logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjN2M0ZGZmIi8+PHRleHQgeD0iMjAiIHk9IjI2IiBmaWxsPSIjZmZmIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+QTwvdGV4dD48L3N2Zz4='">
+      <h1 style="font-size: 16px;">ApexAI</h1>
     </div>
     <button id="menuToggle">Menu</button>
   </header>
 
-  <aside id="sidebar" class="glass-panel">
-    <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
-      <button id="collapseToggle" title="Toggle Sidebar Display Format">◀ Mini</button>
-    </div>
+  <aside id="sidebar">
+    <button id="collapseToggle" title="Toggle Sidebar Display Format">◀ Mini</button>
     
-    <div class="brand" style="display:flex; align-items:center; margin-bottom: 8px;">
-      <svg class="apex-custom-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <rect width="100" height="100" rx="24" fill="#090514" stroke="var(--accent-glow)" stroke-width="1.5"/>
-        <g fill="none" stroke="var(--accent-glow)" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
-          <path d="M50 15 L20 75 L35 75 L45 55 L38 55 L50 30 L62 55 L55 55 L65 75 L80 75 Z"/>
-          <path d="M42 65 L58 65 L50 45 Z" stroke-width="2"/>
-        </g>
-      </svg>
-      <div style="margin-left:12px;">
-        <h1 style="font-size:18px; letter-spacing: 0.5px;">ApexAI</h1>
-        <p class="muted" style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">Premium Kernel</p>
+    <div class="brand">
+      <img src="logo.png" class="logo-img" alt="ApexAI Logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjN2M0ZGZmIi8+PHRleHQgeD0iMjAiIHk9IjI2IiBmaWxsPSIjZmZmIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+QTwvdGV4dD48L3N2Zz4='">
+      <div>
+        <h1>ApexAI</h1>
+        <p class="muted" style="font-size: 12px;">Local Compute Kernel</p>
       </div>
     </div>
 
-    <div class="panel" id="statusPanel" title="System Diagnostic Monitor">
+    <div class="panel" id="statusPanel" title="Click to open engine telemetry analytics">
       <div class="status-container">
         <div id="status">INITIALIZING</div>
       </div>
       <div class="progress">
         <div id="progressBar"></div>
       </div>
+      <div id="debugTray"></div>
     </div>
 
     <div class="sidebar-controls">
       <button id="newChatBtn" class="btn-primary">＋ New Session</button>
 
-      <div class="setting-label">Hardware Engine</div>
-      <select id="engineSelect" class="custom-select">
+      <select id="engineSelect" class="custom-select" style="border-color: var(--accent-glow);">
         <optgroup label="Ultra-Fast (Mobile Safe)">
           <option value="Llama-3.2-1B-Instruct-q4f16_1-MLC" selected>⚡ Llama-3.2-1B (Fastest)</option>
           <option value="TinyLlama-1.1B-Chat-v0.4-q4f16_1-MLC">🏎️ TinyLlama-1.1B</option>
         </optgroup>
-        <optgroup label="Balanced (Laptops)">
-          <option value="gemma-2b-it-q4f16_1-MLC">🟢 Gemma-2B</option>
-          <option value="Llama-3.2-3B-Instruct-q4f16_1-MLC">⚖️ Llama-3.2-3B</option>
+        <optgroup label="Balanced (Laptops/Tablets)">
+          <option value="gemma-2b-it-q4f16_1-MLC">🟢 Gemma-2B-Instruct</option>
+          <option value="Llama-3.2-3B-Instruct-q4f16_1-MLC">⚖️ Llama-3.2-3B (Highly Stable)</option>
+          <option value="Phi-3.5-mini-instruct-q4f16_1-MLC">🧠 Phi-3.5-mini</option>
         </optgroup>
-        <optgroup label="Heavyweight (Desktops)">
-          <option value="Mistral-7B-Instruct-v0.3-q4f16_1-MLC">🌪️ Mistral-7B</option>
+        <optgroup label="Heavyweight (Desktops/8GB+ RAM)">
+          <option value="Mistral-7B-Instruct-v0.3-q4f16_1-MLC">🌪️ Mistral-7B-Instruct</option>
+          <option value="Qwen2-7B-Instruct-q4f16_1-MLC">🐉 Qwen2-7B</option>
           <option value="Llama-3.1-8B-Instruct-q4f32_1-MLC">🔥 Llama-3.1-8B</option>
         </optgroup>
       </select>
       
-      <div class="setting-label">Visual Aesthetic</div>
       <select id="themeSelect" class="custom-select">
-        <optgroup label="Luxury Glass">
-          <option value="vision">🍏 Vision Glass (Premium)</option>
-          <option value="pearl">⚪ Pearl White</option>
-        </optgroup>
-        <optgroup label="Dark Elegance">
-          <option value="obsidian">🪙 Obsidian Gold</option>
-          <option value="sapphire">🔷 Deep Sapphire</option>
-          <option value="dark">🌙 Dark Solid</option>
-        </optgroup>
-        <optgroup label="Hacker / Synth">
-          <option value="neon">⚡ Cyber Neon</option>
-          <option value="crimson">🩸 Cyberpunk Crimson</option>
-          <option value="matrix">📟 Matrix Code</option>
-        </optgroup>
+        <option value="dark">🌙 Dark Theme</option>
+        <option value="light">☀️ Light Theme</option>
+        <option value="neon">⚡ Neon Theme</option>
+        <option value="crimson">🩸 Cyberpunk Crimson</option>
+        <option value="matrix">📟 Matrix Code</option>
       </select>
 
-      <div class="setting-label">Code Syntax Style</div>
-      <select id="syntaxSelect" class="custom-select">
-        <option value="tokyo-night-dark">Tokyo Night</option>
-        <option value="github-dark">GitHub Dark</option>
-        <option value="monokai">Monokai</option>
-        <option value="dracula">Dracula</option>
+      <select id="personaSelect" class="custom-select">
+        <option value="default">🧠 Analyst (Default)</option>
+        <option value="coder">💻 Developer Mode</option>
+        <option value="creative">🎨 Creative Mode</option>
+        <option value="custom">⚙️ Custom Persona</option>
       </select>
-
-      <div class="setting-label">Typography</div>
-      <select id="fontSelect" class="custom-select">
-        <option value="system">🖋️ System UI (Default)</option>
-        <option value="serif">📖 Premium Reading</option>
-        <option value="mono">💻 Developer Grid</option>
-      </select>
+      <textarea id="customPersonaInput" placeholder="Type custom instructions here..."></textarea>
     </div>
 
-    <input type="text" id="chatSearch" class="custom-select" placeholder="🔍 Search history...">
+    <input type="text" id="chatSearch" class="custom-select" placeholder="🔍 Search past chats..." style="margin-top: 4px; border-style: dashed; background: transparent;">
+    
     <div id="sessionList"></div>
 
     <div class="action-row">
-      <button id="factoryResetBtn" class="btn-danger" title="Clear Corrupted Browser Data">⚠️ Hard Reset Cache</button>
+      <button id="exportBtn" class="btn-secondary">Export Chat</button>
+      <button id="clearBtn" class="btn-secondary">Delete</button>
     </div>
 
-    <div class="action-row" style="margin-top: -4px;">
-      <button id="exportPdfBtn" class="btn-secondary" title="Export as PDF Document">📄 PDF</button>
-      <button id="exportBtn" class="btn-secondary" title="Export Markdown/Python">💾 Export</button>
-      <button id="clearBtn" class="btn-secondary">Delete</button>
+    <div class="signature-badge">
+      <p>Made by <strong>Mudassir Jawed</strong></p>
     </div>
   </aside>
 
-  <div id="uiDragResizer"></div>
+  <aside id="snippetPanel">
+    <div class="preview-header" style="background:transparent; border:none; padding:0;">
+      <h2 style="margin:0; font-size:18px;">Saved Snippets</h2>
+      <button id="closeSnippetsBtn" class="btn-secondary" style="border:none; padding:4px;">✕</button>
+    </div>
+    <button id="saveNewSnippetBtn" class="btn-secondary">+ Save Current Input</button>
+    <div class="snippet-list" id="snippetList"></div>
+  </aside>
 
   <main id="main">
-    <div class="top-menu-actions-bar">
-      <button class="action-nav-btn glass-panel" id="zenModeToggleBtn" title="Toggle Cinematic Focus Mode">👁️ Zen Mode</button>
-    </div>
+    <button id="openSnippetsBtn">‹ Snippets</button>
 
     <section id="chatbox">
       </section>
 
-    <button id="scrollToBottomBtn" title="Scroll down">↓</button>
+    <button id="scrollToBottomBtn" title="Scroll down to newest responses">↓</button>
 
     <div id="inputArea">
-      <div class="editor-toolbar glass-panel" id="markdownToolbar">
+      <div class="editor-toolbar" id="markdownToolbar">
         <button class="toolbar-btn" data-wrap="**">Bold</button>
         <button class="toolbar-btn" data-wrap="*">Italic</button>
         <button class="toolbar-btn" data-pre="```\n" data-post="\n```">Code Block</button>
         <button class="toolbar-btn" data-pre="[" data-post="](url)">Link</button>
+        <button class="toolbar-btn" data-pre="\n| Header | Header |\n| ------ | ------ |\n| Cell | Cell |\n">Table</button>
       </div>
 
-      <div class="input-wrap glass-panel">
+      <div class="input-wrap">
         <button id="micBtn" class="action-icon-btn" title="Voice Input">🎤</button>
-        <textarea id="userInput" placeholder="Ask ApexAI, or /fetch URL..." rows="1" disabled></textarea>
+        <textarea id="userInput" placeholder="Type, /fetch URL, or drop a file..." rows="1" disabled></textarea>
         
-        <select id="tokenLengthSelect" class="action-icon-btn" style="width: auto; padding: 0 8px; font-size: 11px; background: transparent; border: 1px solid var(--border-color); color: var(--text-main);" title="Response Max Depth">
-          <option value="256">Short</option>
+        <select id="tokenLengthSelect" class="action-icon-btn" style="width: auto; padding: 0 4px; font-size: 11px; font-weight: bold; background: var(--bg-panel); border: 1px solid var(--border-color); color: var(--text-main);" title="Response Generation Horizon Max Depth">
+          <option value="256">Short Burst</option>
           <option value="1024" selected>Standard</option>
-          <option value="4096">Deep</option>
+          <option value="4096">Blueprint</option>
         </select>
 
         <button id="sendBtn" type="button" disabled>➤</button>
       </div>
-      <div id="typingAnalytics">Words: 0 | Chars: 0</div>
     </div>
   </main>
 
@@ -356,40 +388,36 @@
     import * as webllm from "https://esm.run/@mlc-ai/web-llm";
     import { get, set, del } from "https://cdn.jsdelivr.net/npm/idb-keyval@6/+esm";
 
-    function getFormattedTimestamp() {
-      const now = new Date(); return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    }
-
     const sidebar = document.getElementById("sidebar");
-    const zenModeToggleBtn = document.getElementById("zenModeToggleBtn");
-    zenModeToggleBtn.onclick = () => { document.body.classList.toggle("zen-mode"); };
-
-    let isResizing = false;
-    const uiDragResizer = document.getElementById("uiDragResizer");
-    uiDragResizer.addEventListener("mousedown", () => isResizing = true);
-    document.addEventListener("mousemove", (e) => {
-      if (!isResizing) return;
-      if (e.clientX > 150 && e.clientX < 500) { document.documentElement.style.setProperty('--sidebar-width', `${e.clientX}px`); }
-    });
-    document.addEventListener("mouseup", () => isResizing = false);
-
-    const input = document.getElementById("userInput");
-    const typingAnalytics = document.getElementById("typingAnalytics");
-    
-    input.addEventListener("input", () => {
-      const text = input.value; const words = text.trim() ? text.trim().split(/\s+/).length : 0;
-      typingAnalytics.innerText = `Words: ${words} | Chars: ${text.length}`;
-      input.style.height = "26px"; input.style.height = (input.scrollHeight) + "px"; 
-      sendBtn.disabled = text.trim() === "" || (!ready || generating);
-    });
+    const collapseToggle = document.getElementById("collapseToggle");
+    collapseToggle.onclick = () => {
+      sidebar.classList.toggle("collapsed");
+      collapseToggle.innerText = sidebar.classList.contains("collapsed") ? "▶" : "◀ Mini";
+    };
 
     document.getElementById("markdownToolbar").onclick = (e) => {
       if (!e.target.classList.contains("toolbar-btn")) return;
-      const wrap = e.target.getAttribute("data-wrap") || ""; const pre = e.target.getAttribute("data-pre") || wrap; const post = e.target.getAttribute("data-post") || wrap;
+      const wrap = e.target.getAttribute("data-wrap") || "";
+      const pre = e.target.getAttribute("data-pre") || wrap;
+      const post = e.target.getAttribute("data-post") || wrap;
+      
       const start = input.selectionStart; const end = input.selectionEnd; const text = input.value;
       input.value = text.substring(0, start) + pre + text.substring(start, end) + post + text.substring(end);
       input.focus(); input.selectionStart = input.selectionEnd = start + pre.length + (end - start);
       input.dispatchEvent(new Event('input'));
+    };
+
+    window.readAloudText = function(btn, index) {
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel(); btn.innerText = "🔊 Read Aloud"; return;
+      }
+      const botResponseText = sessions[currentId].messages[index].content;
+      const cleanText = botResponseText.replace(/```[\s\S]*?```/g, "[Code block omitted]").replace(/[*#_`\[\]()]/g, "");
+      
+      const utterance = new SpeechSynthesisUtterance(cleanText);
+      utterance.onend = () => { btn.innerText = "🔊 Read Aloud"; }; utterance.onerror = () => { btn.innerText = "🔊 Read Aloud"; };
+      
+      btn.innerText = "🛑 Stop Audio"; window.speechSynthesis.speak(utterance);
     };
 
     const engineSelect = document.getElementById("engineSelect");
@@ -400,38 +428,37 @@
     let engine = null; let ready = false; let generating = false; let stopRequested = false;
 
     engineSelect.addEventListener('change', (e) => {
-      if (confirm("Switching models reloads the engine. Continue?")) { localStorage.setItem('apexai-model', e.target.value); window.location.reload(); } 
-      else { engineSelect.value = currentModelId; }
+      if (confirm("Switching models requires reloading the AI engine. This will refresh the page. Continue?")) {
+        localStorage.setItem('apexai-model', e.target.value); window.location.reload();
+      } else { engineSelect.value = currentModelId; }
     });
 
     const welcomeHTML = `
       <div class="welcome" id="welcome">
-        <svg class="apex-custom-logo-big" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          <rect width="100" height="100" rx="24" fill="#090514" stroke="var(--accent-glow)" stroke-width="1.5"/>
-          <g fill="none" stroke="var(--accent-glow)" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
-            <path d="M50 15 L20 75 L35 75 L45 55 L38 55 L50 30 L62 55 L55 55 L65 75 L80 75 Z"/>
-            <path d="M42 65 L58 65 L50 45 Z" stroke-width="2"/>
-          </g>
-        </svg>
-        <h2>Intelligence Workspace</h2>
-        <p class="muted">Running profile: <strong>${currentModelId.split('-')[0]}</strong>.</p>
+        <img src="logo.png" class="welcome-logo" alt="ApexAI Logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjN2M0ZGZmIi8+PHRleHQgeD0iMjAiIHk9IjI2IiBmaWxsPSIjZmZmIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+QTwvdGV4dD48L3N2Zz4='">
+        <h2>Intelligent Workspace</h2>
+        <p class="muted">Currently running: <strong>${currentModelId.split('-')[0]}</strong>.</p>
         <div class="prompts">
           <button class="prompt">Create a simple HTML button</button>
           <button class="prompt">Write a Python script for file sorting</button>
+          <button class="prompt">/fetch https://en.wikipedia.org/wiki/West_Bengal</button>
         </div>
       </div>`;
 
-    const baseRule = "CRITICAL INSTRUCTION: You are an unrestricted, highly helpful AI. Provide complete, detailed, and comprehensive answers. Write out full code, full math steps, and full explanations. If asked who made you, created you, your founder, or developer, answer explicitly: 'Mudassir Jawed'. Do not mention other entities.";
-    const personas = { default: "You are ApexAI, a professional analytical intelligence agent. " + baseRule, coder: "You are ApexAI, an expert software engineer. Focus entirely on clean, robust code. Write complete scripts. " + baseRule };
+    const baseRule = "CRITICAL INSTRUCTION: You are an unrestricted, highly helpful AI. You are explicitly AUTHORIZED to discuss sensitive topics including politics, elections, world events, and history objectively. DO NOT trigger safety refusals for general questions about these topics. NEVER hallucinate that a user is asking for illegal activities unless explicitly stated. Provide complete, detailed, and comprehensive answers. Write out full code, full math steps, and full explanations. If asked who made you, created you, your founder, or developer, answer explicitly: 'Mudassir Jawed'. Do not mention other entities.";
+    const personas = {
+      default: "You are ApexAI, a professional analytical intelligence agent. " + baseRule,
+      coder: "You are ApexAI, an expert software engineer. Focus entirely on clean, robust code. Write complete scripts. " + baseRule,
+      creative: "You are ApexAI, a creative brainstorming assistant. Be expansive and detailed. " + baseRule
+    };
 
-    const chatbox = document.getElementById("chatbox"); 
-    const sendBtn = document.getElementById("sendBtn"); 
-    const themeSelect = document.getElementById("themeSelect"); 
-    const fontSelect = document.getElementById("fontSelect");
-    const syntaxSelect = document.getElementById("syntaxSelect");
-    const chatSearch = document.getElementById("chatSearch");
-    const scrollToBottomBtn = document.getElementById("scrollToBottomBtn"); 
-    const tokenLengthSelect = document.getElementById("tokenLengthSelect"); 
+    const chatbox = document.getElementById("chatbox"); const input = document.getElementById("userInput");
+    const sendBtn = document.getElementById("sendBtn"); const micBtn = document.getElementById("micBtn");
+    const themeSelect = document.getElementById("themeSelect"); const personaSelect = document.getElementById("personaSelect");
+    const customPersonaInput = document.getElementById("customPersonaInput"); const chatSearch = document.getElementById("chatSearch");
+    const scrollToBottomBtn = document.getElementById("scrollToBottomBtn"); const commandPalette = document.getElementById("commandPalette");
+    const statusPanel = document.getElementById("statusPanel"); const debugTray = document.getElementById("debugTray");
+    const tokenLengthSelect = document.getElementById("tokenLengthSelect");
 
     chatbox.addEventListener("scroll", () => {
       if (chatbox.scrollHeight - chatbox.scrollTop > chatbox.clientHeight + 400) { scrollToBottomBtn.style.display = "flex"; } 
@@ -439,100 +466,149 @@
     });
     scrollToBottomBtn.onclick = () => { chatbox.scrollTop = chatbox.scrollHeight; };
 
-    syntaxSelect.addEventListener('change', (e) => { document.getElementById("syntaxTheme").href = `https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/${e.target.value}.min.css`; localStorage.setItem('apexai-syntax', e.target.value); });
-    const savedSyntax = localStorage.getItem('apexai-syntax'); if(savedSyntax) { syntaxSelect.value = savedSyntax; document.getElementById("syntaxTheme").href = `https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/${savedSyntax}.min.css`; }
+    window.addEventListener("keydown", (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); commandPalette.classList.toggle("open"); }
+      if (e.key === "Escape") { commandPalette.classList.remove("open"); }
+    });
 
-    const savedTheme = localStorage.getItem('apexai-theme') || 'vision'; themeSelect.value = savedTheme; document.body.className = `theme-${savedTheme}`;
-    themeSelect.addEventListener('change', (e) => { document.body.className = `theme-${e.target.value}`; localStorage.setItem('apexai-theme', e.target.value); });
-
-    const savedFont = localStorage.getItem('apexai-font') || 'system'; fontSelect.value = savedFont; document.body.classList.add(`font-${savedFont}`);
-    fontSelect.addEventListener('change', (e) => { document.body.classList.remove('font-system', 'font-serif', 'font-mono'); document.body.classList.add(`font-${e.target.value}`); localStorage.setItem('apexai-font', e.target.value); });
-
-    // EMERGENCY CACHE FACTORY RESET
-    document.getElementById("factoryResetBtn").onclick = async () => {
-        if(confirm("This will wipe all saved chats and explicitly delete the corrupted AI model cache to fix the INITIALIZING freeze. Continue?")) {
-            localStorage.clear();
-            if ('caches' in window) {
-                const names = await caches.keys();
-                for (let name of names) { await caches.delete(name); }
-            }
-            indexedDB.databases().then(dbs => {
-                dbs.forEach(db => indexedDB.deleteDatabase(db.name));
-            });
-            alert("Reset complete. The browser will now reload and download a clean copy of the AI.");
-            window.location.reload();
-        }
+    document.getElementById("hudToggleTheme").onclick = () => {
+      let options = ["dark", "light", "neon", "crimson", "matrix"]; let nextIdx = (options.indexOf(themeSelect.value) + 1) % options.length;
+      themeSelect.value = options[nextIdx]; themeSelect.dispatchEvent(new Event('change')); commandPalette.classList.remove("open");
     };
+
+    statusPanel.onclick = () => { debugTray.style.display = debugTray.style.display === "block" ? "none" : "block"; };
+    function appendTelemetryLog(text) {
+      const entry = document.createElement("div"); entry.textContent = `[${new Date().toLocaleTimeString()}] ${text}`;
+      debugTray.appendChild(entry); debugTray.scrollTop = debugTray.scrollHeight;
+    }
+
+    const savedTheme = localStorage.getItem('apexai-theme') || 'dark';
+    themeSelect.value = savedTheme;
+    if(savedTheme !== 'dark') document.body.className = `theme-${savedTheme}`;
+
+    themeSelect.addEventListener('change', (e) => {
+      document.body.className = e.target.value === 'dark' ? '' : `theme-${e.target.value}`;
+      localStorage.setItem('apexai-theme', e.target.value);
+    });
 
     chatSearch.addEventListener('input', (e) => {
       const term = e.target.value.toLowerCase();
-      document.querySelectorAll('.session-item').forEach(item => { item.style.display = item.querySelector('.session-text').innerText.toLowerCase().includes(term) ? 'flex' : 'none'; });
+      document.querySelectorAll('.session-item').forEach(item => {
+        item.style.display = item.querySelector('.session-text').innerText.toLowerCase().includes(term) ? 'flex' : 'none';
+      });
     });
 
     let sessions = {}; let currentId = null;
-    async function initDatabase() { 
-      try {
-        sessions = await get('apexai-sessions') || {}; currentId = localStorage.getItem('apexai-current-id'); 
-      } catch (err) {
-        sessions = JSON.parse(localStorage.getItem('apexai-fallback-sessions')) || {}; currentId = localStorage.getItem('apexai-current-id'); 
-      }
-      if (!currentId || !sessions[currentId]) await createNewSession(); renderSessionList(); loadSessionToUI(); 
+
+    async function initDatabase() {
+      sessions = await get('apexai-sessions') || {}; currentId = localStorage.getItem('apexai-current-id');
+      if (!currentId || !sessions[currentId]) await createNewSession();
+      renderSessionList(); loadSessionToUI();
     }
-    
-    async function createNewSession() { currentId = Date.now().toString(); sessions[currentId] = { title: "New Workspace", messages: [] }; await saveSessions(); loadSessionToUI(); }
-    
-    async function saveSessions() { 
-      try { await set('apexai-sessions', sessions); } catch(err) { localStorage.setItem('apexai-fallback-sessions', JSON.stringify(sessions)); }
-      localStorage.setItem('apexai-current-id', currentId); renderSessionList(); 
+
+    async function createNewSession() {
+      currentId = Date.now().toString(); sessions[currentId] = { title: "New Chat", messages: [], persona: 'default', customPrompt: '' };
+      await saveSessions(); loadSessionToUI();
     }
-    
-    function switchSession(id) { if (generating) return; currentId = id; localStorage.setItem('apexai-current-id', currentId); loadSessionToUI(); renderSessionList(); }
+
+    async function saveSessions() {
+      await set('apexai-sessions', sessions); localStorage.setItem('apexai-current-id', currentId); renderSessionList();
+    }
+
+    function switchSession(id) {
+      if (generating) return; currentId = id; localStorage.setItem('apexai-current-id', currentId);
+      loadSessionToUI(); renderSessionList(); closeMobileMenu();
+    }
 
     function renderSessionList() {
       const list = document.getElementById('sessionList'); list.innerHTML = '';
       Object.entries(sessions).reverse().forEach(([id, session]) => {
         const div = document.createElement('div'); div.className = `session-item ${id === currentId ? 'active' : ''}`;
-        const titleSpan = document.createElement("span"); titleSpan.className = "session-text"; titleSpan.innerText = session.title; titleSpan.onclick = () => switchSession(id);
+        const titleSpan = document.createElement("span"); titleSpan.className = "session-text"; titleSpan.innerText = session.title;
+        titleSpan.onclick = () => switchSession(id);
         const renameBtn = document.createElement("button"); renameBtn.className = "session-rename-btn"; renameBtn.innerText = "✎";
-        renameBtn.onclick = async (e) => { e.stopPropagation(); const nextTitle = prompt("Enter new title:", session.title); if (nextTitle && nextTitle.trim()) { sessions[id].title = nextTitle.trim(); await saveSessions(); } };
+        renameBtn.onclick = async (e) => {
+          e.stopPropagation(); const nextTitle = prompt("Enter new title for workspace session:", session.title);
+          if (nextTitle && nextTitle.trim()) { sessions[id].title = nextTitle.trim(); await saveSessions(); }
+        };
         div.appendChild(titleSpan); div.appendChild(renameBtn); list.appendChild(div);
       });
       chatSearch.dispatchEvent(new Event('input'));
     }
 
     function loadSessionToUI() {
-      chatbox.innerHTML = '';
+      chatbox.innerHTML = ''; personaSelect.value = sessions[currentId].persona || 'default';
+      customPersonaInput.value = sessions[currentId].customPrompt || ''; customPersonaInput.style.display = personaSelect.value === 'custom' ? 'block' : 'none';
+
       if (sessions[currentId].messages.length === 0) {
         chatbox.innerHTML = welcomeHTML;
         document.querySelectorAll(".prompt").forEach((b) => { b.onclick = () => { input.value = b.textContent.trim(); input.dispatchEvent(new Event('input')); input.focus(); }; });
       } else {
         sessions[currentId].messages.forEach((msg, index) => {
-          addMsgToDOM(msg.content, msg.role === 'user' ? 'user' : 'bot', index, msg.timestamp);
-          if (msg.stats && msg.role === 'bot') { const statDiv = document.createElement('div'); statDiv.className = 'generation-stats'; statDiv.innerText = msg.stats; chatbox.lastChild.appendChild(statDiv); }
+          addMsgToDOM(msg.content, msg.role === 'user' ? 'user' : 'bot', index);
+          if (msg.stats && msg.role === 'bot') {
+            const statDiv = document.createElement('div'); statDiv.className = 'generation-stats'; statDiv.innerText = msg.stats; chatbox.lastChild.appendChild(statDiv);
+          }
         });
       }
       scrollBottom();
     }
 
+    async function fetchWebpage(url) {
+      try {
+        const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
+        const data = await res.json(); const parser = new DOMParser();
+        const doc = parser.parseFromString(data.contents, 'text/html');
+        return doc.body.textContent.replace(/\s+/g, ' ').substring(0, 6000); 
+      } catch(e) { return "Error fetching webpage."; }
+    }
+
+    let snippets = JSON.parse(localStorage.getItem('apexai-snippets')) || [];
+    const snippetPanel = document.getElementById('snippetPanel');
+    document.getElementById('openSnippetsBtn').onclick = () => snippetPanel.classList.add('open');
+    document.getElementById('closeSnippetsBtn').onclick = () => snippetPanel.classList.remove('open');
+    document.getElementById('saveNewSnippetBtn').onclick = () => {
+      if(!input.value.trim()) return alert("Type code first!");
+      const title = prompt("Name this snippet:");
+      if(title) { snippets.push({ title, code: input.value.trim() }); localStorage.setItem('apexai-snippets', JSON.stringify(snippets)); renderSnippets(); input.value = ""; }
+    };
+    function renderSnippets() {
+      const list = document.getElementById('snippetList'); list.innerHTML = '';
+      snippets.forEach((snip, index) => {
+        const card = document.createElement('div'); card.className = 'snippet-card';
+        card.innerHTML = `<div class="snippet-header"><span class="snippet-title">${snip.title}</span><button class="snippet-del" data-idx="${index}">✕</button></div><div class="snippet-code">${snip.code}</div>`;
+        card.onclick = (e) => {
+          if(e.target.classList.contains('snippet-del')) { snippets.splice(e.target.dataset.idx, 1); localStorage.setItem('apexai-snippets', JSON.stringify(snippets)); renderSnippets(); }
+          else { input.value = snip.code; input.dispatchEvent(new Event('input')); input.focus(); if(window.innerWidth <= 768) snippetPanel.classList.remove('open'); }
+        };
+        list.appendChild(card);
+      });
+    }
+    renderSnippets();
+
     const renderer = new marked.Renderer(); const originalCode = renderer.code.bind(renderer);
     function escapeHtml(str) { return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
     renderer.code = function(code, language, isEscaped) {
-      const highlighted = originalCode(code, language, isEscaped); 
-      let actions = `<div class="code-actions"><button class="code-btn copy-btn">Copy</button></div>`;
+      const highlighted = originalCode(code, language, isEscaped); const isHtml = language === 'html' || language === 'xml';
+      let actions = `<div class="code-actions">`;
+      if(isHtml) { actions += `<button class="code-btn preview-btn" data-raw="${escapeHtml(code)}">Preview</button>`; }
+      actions += `<button class="code-btn copy-btn">Copy</button></div>`;
       return `<div class="code-wrapper">${actions}${highlighted}</div>`;
     };
     marked.setOptions({ renderer: renderer, breaks: true, highlight: function(code, lang) { return hljs.highlight(code, { language: hljs.getLanguage(lang) ? lang : 'plaintext' }).value; } });
 
     document.addEventListener('click', (e) => {
       if (e.target.classList.contains('copy-btn')) { navigator.clipboard.writeText(e.target.closest('.code-wrapper').querySelector('code').innerText); e.target.innerText = "Copied!"; setTimeout(() => e.target.innerText = "Copy", 2000); }
+      if (e.target.classList.contains('preview-btn')) { const txt = document.createElement("textarea"); txt.innerHTML = e.target.getAttribute('data-raw'); document.getElementById('previewFrame').srcdoc = txt.value; document.getElementById('previewModal').classList.add('open'); }
     });
+    document.getElementById('closePreview').onclick = () => document.getElementById('previewModal').classList.remove('open');
 
     document.getElementById("exportBtn").addEventListener("click", () => {
       if (sessions[currentId].messages.length === 0) return;
       const format = prompt("Export as: md, html, or py?", "md")?.toLowerCase(); if (!['md', 'html', 'py'].includes(format)) return;
       let output = ""; let mime = "text/plain";
       if (format === 'md') {
-        output = `# ${sessions[currentId].title}\n\n`; sessions[currentId].messages.forEach(m => output += `### ${m.role === 'user' ? 'User' : 'ApexAI'} (${m.timestamp})\n${m.content}\n\n---\n\n`); mime = "text/markdown";
+        output = `# ${sessions[currentId].title}\n\n`; sessions[currentId].messages.forEach(m => output += `### ${m.role === 'user' ? 'User' : 'ApexAI'}\n${m.content}\n\n---\n\n`); mime = "text/markdown";
       } else if (format === 'html') {
         output = `<html><body style="font-family:sans-serif; max-width:800px; margin:auto; padding:20px;"><h1>${sessions[currentId].title}</h1>`;
         sessions[currentId].messages.forEach(m => output += `<div style="background:${m.role==='user'?'#f0f0f0':'#e0f7fa'}; padding:15px; margin-bottom:10px; border-radius:8px;"><strong>${m.role==='user'?'User':'ApexAI'}:</strong><br>${marked.parse(m.content)}</div>`);
@@ -545,90 +621,71 @@
       const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([output], { type: mime })); a.download = `ApexAI_${sessions[currentId].title.replace(/[^a-z0-9]/gi, '_')}.${format}`; a.click();
     });
 
-    document.getElementById("exportPdfBtn").addEventListener("click", () => { window.print(); });
-
     window.editMessage = async function(index) {
       if (generating) return; input.value = sessions[currentId].messages[index].content; input.dispatchEvent(new Event('input')); input.focus();
       sessions[currentId].messages = sessions[currentId].messages.slice(0, index); await saveSessions(); loadSessionToUI();
     };
 
-    document.getElementById("newChatBtn").addEventListener("click", async () => { if(!generating) { await createNewSession(); } });
+    window.branchSession = async function(index) {
+      if (generating) return; const newId = Date.now().toString();
+      sessions[newId] = { title: sessions[currentId].title + " (Branch)", messages: sessions[currentId].messages.slice(0, index + 1), persona: sessions[currentId].persona, customPrompt: sessions[currentId].customPrompt };
+      await saveSessions(); switchSession(newId);
+    };
+
+    window.retryMessage = async function(index) {
+      if (generating) return; const userText = sessions[currentId].messages[index - 1].content;
+      sessions[currentId].messages = sessions[currentId].messages.slice(0, index - 1);
+      await saveSessions(); loadSessionToUI(); input.value = userText; input.dispatchEvent(new Event('input')); sendBtn.click();
+    };
+
+    personaSelect.addEventListener('change', async (e) => { sessions[currentId].persona = e.target.value; customPersonaInput.style.display = e.target.value === 'custom' ? 'block' : 'none'; await saveSessions(); });
+    customPersonaInput.addEventListener('input', async (e) => { sessions[currentId].customPrompt = e.target.value; await saveSessions(); });
+    document.getElementById("newChatBtn").addEventListener("click", async () => { if(!generating) { await createNewSession(); closeMobileMenu(); } });
     document.getElementById("clearBtn").addEventListener("click", async () => {
       if(generating) return; delete sessions[currentId]; const keys = Object.keys(sessions);
-      currentId = keys.length > 0 ? keys[keys.length - 1] : null; if (!currentId) await createNewSession(); else await saveSessions(); loadSessionToUI();
+      currentId = keys.length > 0 ? keys[keys.length - 1] : null; if (!currentId) await createNewSession(); else await saveSessions(); loadSessionToUI(); closeMobileMenu();
     });
 
+    function closeMobileMenu() { document.getElementById("sidebar").classList.remove("open"); document.getElementById("mobileOverlay").classList.remove("open"); }
+    document.getElementById("menuToggle").addEventListener("click", () => { document.getElementById("sidebar").classList.toggle("open"); document.getElementById("mobileOverlay").classList.toggle("open"); });
+    document.getElementById("mobileOverlay").addEventListener("click", closeMobileMenu);
+
     input.addEventListener('keydown', function(e) {
-      if (e.key == 'Tab') { e.preventDefault(); const start = this.selectionStart; const end = this.selectionEnd; this.value = this.value.substring(0, start) + "  " + this.value.substring(end); this.selectionStart = this.selectionEnd = start + 2; }
+      if (e.key == 'Tab') {
+        e.preventDefault(); const start = this.selectionStart; const end = this.selectionEnd;
+        this.value = this.value.substring(0, start) + "  " + this.value.substring(end); this.selectionStart = this.selectionEnd = start + 2;
+      }
       if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSendAction(); }
     });
 
+    input.addEventListener("input", () => { input.style.height = "26px"; input.style.height = (input.scrollHeight) + "px"; sendBtn.disabled = input.value.trim() === "" || (!ready || generating); });
+    sendBtn.addEventListener("click", handleSendAction);
+
+    document.body.addEventListener('dragover', (e) => { e.preventDefault(); if(!generating) document.body.classList.add('drag-active'); });
+    document.body.addEventListener('dragleave', (e) => { if (e.relatedTarget === null) document.body.classList.remove('drag-active'); });
+    document.body.addEventListener('drop', (e) => {
+      e.preventDefault(); document.body.classList.remove('drag-active'); if(generating || !ready || !e.dataTransfer.files[0]) return;
+      const reader = new FileReader(); reader.onload = (ev) => { const docText = ev.target.result.substring(0, 5000); input.value += (input.value ? "\n\n" : "") + `[Document Contents:\n${docText}\n]`; input.dispatchEvent(new Event('input')); };
+      reader.readAsText(e.dataTransfer.files[0]);
+    });
+
     async function init() {
-      try { await initDatabase(); } catch(e) { console.warn("DB Failed", e); }
-      
-      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-      
-      // Fallback check if WebGPU is blocked
-      if (!navigator.gpu) { 
-        setStatus("HARDWARE BLOCKED", 0); 
-        if (isSafari) {
-          alert("Safari is blocking WebGPU. \n\nGo to Settings > Safari > Advanced > Feature Flags \nTurn ON 'WebGPU' \nRestart Safari.");
-        } else {
-          alert("Your browser does not support WebGPU. Please use Chrome.");
-        }
-        return addMsgToDOM("WebGPU is blocked. Enable it in Safari settings.", "bot error", -1); 
-      }
-
+      await initDatabase(); appendTelemetryLog("System verification pipeline armed.");
+      if (!("gpu" in navigator)) { setStatus("HARDWARE ERROR", 0); appendTelemetryLog("WebGPU critical exception detected."); return addMsgToDOM("WebGPU is missing. Access via Chrome or Edge.", "bot error", -1); }
       try {
-        setStatus("CONNECTING...", 0); 
-        
-        // Timeout watchdog for corrupted cache freezes
-        let loadingStarted = false;
-        setTimeout(() => {
-            if (!loadingStarted) {
-                setStatus("CACHE CORRUPTED", 0);
-                alert("The AI model failed to download properly on a previous attempt, corrupting the cache. Please click the red '⚠️ Hard Reset Cache' button in the sidebar to fix this.");
-            }
-        }, 15000);
-        
-        engine = await webllm.CreateMLCEngine(currentModelId, { 
-          initProgressCallback: (p) => { 
-            loadingStarted = true;
-            setStatus(`DOWNLOADING ${Math.round((p.progress||0)*100)}%`, Math.round((p.progress||0)*100)); 
-          }
-        });
-        
-        ready = true; 
-        setStatus("ONLINE", 100); 
-        input.disabled = false; 
-        input.focus(); 
-      } catch (error) { 
-        setStatus("ERROR", 0); 
-        if(error.message.includes("buffer") || error.message.includes("memory")) {
-             alert("Device out of memory. Click 'Hard Reset Cache' and switch to TinyLlama.");
-        } else {
-             alert(`Failed: ${error.message}`);
-        }
-        addMsgToDOM(`Engine failed: ${error.message}`, "bot error", -1); 
-      }
+        setStatus("LOADING 0%", 0); appendTelemetryLog(`Initializing hardware profile: ${currentModelId.split('-')[0]}`);
+        engine = await webllm.CreateMLCEngine(currentModelId, { initProgressCallback: (p) => { setStatus(`LOADING ${Math.round((p.progress||0)*100)}%`, Math.round((p.progress||0)*100)); if(p.text) appendTelemetryLog(p.text); }});
+        ready = true; setStatus("ONLINE", 100); input.disabled = false; input.focus(); appendTelemetryLog("Local compute matrix state: ONLINE.");
+      } catch (error) { setStatus("OFFLINE", 0); appendTelemetryLog(`Core error initialization drop: ${error.message}`); addMsgToDOM("Engine failed to initialize. Ensure WebGPU is active.", "bot error", -1); }
     }
 
-    function handleSendAction() { 
-      if (generating && engine && engine.interruptGenerate) { 
-        stopRequested = true; engine.interruptGenerate(); 
-        sendBtn.innerHTML = "➤"; sendBtn.classList.remove("stop-mode");
-      } else { sendMessage(); } 
-    }
+    function handleSendAction() { if (generating && engine && engine.interruptGenerate) { stopRequested = true; engine.interruptGenerate(); } else { sendMessage(); } }
     function setStatus(label, percent) { document.getElementById("status").textContent = label; document.getElementById("progressBar").style.width = `${percent}%`; }
     function scrollBottom() { chatbox.scrollTop = chatbox.scrollHeight; }
 
-    function addMsgToDOM(text, cls, index, timestampStr) {
+    function addMsgToDOM(text, cls, index) {
       const welcomeEl = document.getElementById("welcome"); if (welcomeEl) welcomeEl.remove();
       const container = document.createElement("div"); container.className = `msg-container ${cls}`;
-      
-      const timeDiv = document.createElement("div"); timeDiv.className = "msg-timestamp"; timeDiv.innerText = timestampStr || getFormattedTimestamp();
-      container.appendChild(timeDiv);
-
       const msgDiv = document.createElement("div"); msgDiv.className = "msg";
       
       if(cls === "user") {
@@ -642,11 +699,16 @@
         msgDiv.innerHTML = marked.parse(text); container.appendChild(msgDiv); 
         if(index !== undefined && index !== -1) {
           const actionsDiv = document.createElement("div"); actionsDiv.className = "msg-actions";
-          const branchBtn = document.createElement("button"); branchBtn.className = "edit-btn"; branchBtn.innerText = "⑂ Branch"; branchBtn.onclick = () => {
-             const newId = Date.now().toString(); sessions[newId] = { title: "Branch", messages: sessions[currentId].messages.slice(0, index + 1) };
-             saveSessions(); switchSession(newId);
-          };
-          actionsDiv.appendChild(branchBtn); container.appendChild(actionsDiv);
+          const branchBtn = document.createElement("button"); branchBtn.className = "edit-btn"; branchBtn.innerText = "⑂ Branch Chat"; branchBtn.onclick = () => window.branchSession(index);
+          
+          const readBtn = document.createElement("button"); readBtn.className = "edit-btn"; readBtn.innerText = "🔊 Read Aloud";
+          readBtn.onclick = () => window.readAloudText(readBtn, index); actionsDiv.appendChild(readBtn);
+
+          if (index === sessions[currentId].messages.length - 1) {
+              const retryBtn = document.createElement("button"); retryBtn.className = "edit-btn"; retryBtn.innerText = "↻ Retry"; retryBtn.onclick = () => window.retryMessage(index);
+              actionsDiv.appendChild(retryBtn);
+          }
+          actionsDiv.insertBefore(branchBtn, actionsDiv.firstChild); container.appendChild(actionsDiv);
         }
       }
       chatbox.appendChild(container); scrollBottom(); return msgDiv;
@@ -654,30 +716,45 @@
 
     async function sendMessage() {
       let text = input.value.trim(); if (!text || !ready) return;
-      generating = true; stopRequested = false; input.value = ""; typingAnalytics.innerText = `Words: 0 | Chars: 0`; input.style.height = "26px"; sendBtn.innerHTML = "STOP"; sendBtn.classList.add("stop-mode");
+      generating = true; stopRequested = false; input.value = ""; input.style.height = "26px"; input.disabled = true; sendBtn.innerHTML = "■"; sendBtn.classList.add("stop-mode");
 
       if (sessions[currentId].messages.length === 0) { sessions[currentId].title = text.length > 25 ? text.substring(0, 25) + "..." : text; renderSessionList(); }
-      
-      const userTimestamp = getFormattedTimestamp();
-      const userIndex = sessions[currentId].messages.length; addMsgToDOM(text, "user", userIndex, userTimestamp); 
+      const userIndex = sessions[currentId].messages.length; addMsgToDOM(text, "user", userIndex); 
 
-      sessions[currentId].messages.push({ role: "user", content: text, timestamp: userTimestamp }); await saveSessions();
+      let aiPrompt = text;
+      if (text.startsWith("/fetch ")) {
+        const url = text.split(" ")[1];
+        if(url) {
+            const botDiv = addMsgToDOM("Fetching website data...", "bot", -1); const siteContent = await fetchWebpage(url);
+            aiPrompt = `Read this website content:\n\n${siteContent}\n\nUser asked: Summarize or act on the above URL.`; botDiv.remove();
+        }
+      }
+
+      sessions[currentId].messages.push({ role: "user", content: text, aiPrompt: aiPrompt }); await saveSessions();
+      const botDiv = addMsgToDOM("Computing sequence...", "bot", -1);
       
-      const botTimestamp = getFormattedTimestamp();
-      const botDiv = addMsgToDOM("Computing...", "bot", -1, botTimestamp);
+      let systemPrompt = personas[sessions[currentId].persona] || personas.default;
+      if(sessions[currentId].persona === 'custom' && sessions[currentId].customPrompt) { systemPrompt = sessions[currentId].customPrompt + " " + CREATOR_RULE; }
       
-      const systemPrompt = "You are ApexAI. " + baseRule;
       const chatMessages = [{ role: "system", content: systemPrompt }];
-      sessions[currentId].messages.slice(-8).forEach(m => chatMessages.push({role: m.role, content: m.content}));
+      sessions[currentId].messages.slice(-10).forEach(m => chatMessages.push({role: m.role, content: m.aiPrompt || m.content}));
       
-      const startTime = performance.now();
+      const startTime = performance.now(); appendTelemetryLog(`Dispatching prompt payload to compute core.`);
 
       try {
         let reply = ""; const maxTokensSelection = parseInt(tokenLengthSelect.value) || 1024;
-        const chunks = await engine.chat.completions.create({ messages: chatMessages, stream: true, temperature: 0.3, max_tokens: maxTokensSelection });
+        
+        const chunks = await engine.chat.completions.create({ 
+          messages: chatMessages, stream: true, 
+          temperature: sessions[currentId].persona === 'creative' ? 0.7 : 0.3,
+          max_tokens: maxTokensSelection
+        });
         for await (const chunk of chunks) {
           if (stopRequested) break;
-          reply += chunk.choices[0]?.delta?.content || ""; botDiv.innerHTML = marked.parse(reply) || "Processing..."; chatbox.scrollTop = chatbox.scrollHeight;
+          reply += chunk.choices[0]?.delta?.content || ""; botDiv.innerHTML = marked.parse(reply) || "Processing...";
+          
+          // AUTO-SCROLL LOOK ANCHOR RUNTIME FOR LIVE TRACKING
+          chatbox.scrollTop = chatbox.scrollHeight;
         }
 
         const endTime = performance.now(); const finalReply = reply.trim() || (stopRequested ? "Process interrupted." : "No output.");
@@ -686,13 +763,17 @@
         const timeSec = ((endTime - startTime) / 1000).toFixed(1); const estimatedTokens = Math.round(finalReply.split(/\s+/).length * 1.3);
         const statsStr = `${timeSec}s · ~${(estimatedTokens / timeSec).toFixed(1)} tokens/s`;
 
-        const statDiv = document.createElement('div'); statDiv.className = 'generation-stats'; statDiv.innerText = statsStr; botDiv.parentElement.appendChild(statDiv);
-        sessions[currentId].messages.push({ role: "assistant", content: finalReply, stats: statsStr, timestamp: botTimestamp }); await saveSessions(); loadSessionToUI();
+        const statDiv = document.createElement('div'); statDiv.className = 'generation-stats'; statDiv.innerText = statsStr;
+        botDiv.parentElement.appendChild(statDiv);
+        
+        sessions[currentId].messages.push({ role: "assistant", content: finalReply, stats: statsStr }); await saveSessions();
+        appendTelemetryLog(`Computation complete. Context tokens generated: ~${estimatedTokens}`);
+        loadSessionToUI();
 
       } catch (error) { 
-        console.error(error); botDiv.classList.add("error"); botDiv.textContent = "Error: " + (error.message || "Execution interrupted."); 
+        console.error(error); appendTelemetryLog(`Core execution loop crashed: ${error.message}`); botDiv.classList.add("error"); botDiv.textContent = "Error: " + (error.message || "Execution interrupted."); 
       } finally { 
-        generating = false; sendBtn.innerHTML = "➤"; sendBtn.classList.remove("stop-mode"); input.focus(); scrollBottom(); 
+        generating = false; input.disabled = false; sendBtn.innerHTML = "➤"; sendBtn.classList.remove("stop-mode"); input.focus(); scrollBottom(); 
       }
     }
     
